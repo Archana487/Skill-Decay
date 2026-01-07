@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skill Decay Pro | Advanced Tracker</title>
+    <!-- Modern Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Ionicons for Premium Icons -->
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --bg-deep: #0f172a;
+            --bg-card: rgba(30, 41, 59, 0.7);
+            --accent-primary: #6366f1;
+            --accent-secondary: #06b6d4;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-glass: rgba(255, 255, 255, 0.1);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            background-image:
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(6, 182, 212, 0.1) 0px, transparent 50%);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        .outfit {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .glass {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-glass);
+            border-radius: 20px;
+        }
+
+        .glass-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-hover:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 40px -10px rgba(0, 0, 0, 0.5);
+            border-color: rgba(255, 255, 255, 0.2);
+            background: rgba(30, 41, 59, 0.9);
+        }
+
+        .page-header {
+            padding: 3rem 0;
+        }
+
+        .stat-badge {
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 20px;
+            text-transform: uppercase;
+        }
+
+        .stat-badge.good {
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+        }
+
+        .stat-badge.warn {
+            background: rgba(245, 158, 11, 0.2);
+            color: #fbbf24;
+        }
+
+        .stat-badge.crit {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+        }
+
+        .skill-card {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem;
+        }
+
+        .skill-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .decay-progress {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            margin: 1.5rem 0;
+            overflow: hidden;
+        }
+
+        .decay-fill {
+            height: 100%;
+            transition: width 1s ease-in-out;
+        }
+
+        .intervention-box {
+            margin-top: auto;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: 12px;
+            padding: 12px;
+            font-size: 0.85rem;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .btn-premium {
+            background: linear-gradient(135deg, var(--accent-primary), #4f46e5);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 0.6rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-premium:hover {
+            opacity: 0.9;
+            transform: scale(1.02);
+            color: white;
+        }
+
+        .btn-action-small {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-glass);
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            border-radius: 8px;
+            padding: 2px 10px;
+        }
+
+        .btn-action-small:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .chart-wrap {
+            position: relative;
+            width: 160px;
+            height: 160px;
+            margin: 0 auto;
+        }
+
+        .chart-center-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .history-item {
+            padding: 1rem;
+            border-left: 2px solid var(--accent-primary);
+            margin-bottom: 1rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 0 12px 12px 0;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .form-control,
+        .form-select {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--border-glass);
+            color: white;
+            border-radius: 10px;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            background: rgba(15, 23, 42, 0.8);
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+            color: white;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container pb-5">
+        <header class="page-header row align-items-center">
+            <div class="col-lg-8">
+                <span class="text-accent outfit fw-bold"
+                    style="color: var(--accent-secondary); letter-spacing: 2px;">ANALYTICS ENGINE</span>
+                <h1 class="display-5 fw-bold mt-1">Skill Decay <span style="color: var(--accent-primary)">Pro</span>
+                </h1>
+                <p class="text-muted lead">Smart monitoring for continuous learning and retention.</p>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                <button class="btn btn-premium" data-bs-toggle="modal" data-bs-target="#addSkillModal">
+                    <ion-icon name="add-outline" class="me-1"></ion-icon>New Analysis
+                </button>
+            </div>
+        </header>
+
+        <div class="row g-4 mb-5">
+            <div class="col-xl-3 col-md-6">
+                <div class="glass p-4 h-100">
+                    <div class="text-muted small fw-bold mb-2">AVG RETENTION</div>
+                    <div class="h2 mb-0 outfit" id="avgRetention">--%</div>
+                    <div id="retentionStatus" class="mt-2"></div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6">
+                <div class="glass p-4 h-100">
+                    <div class="text-muted small fw-bold mb-2">ACTIVE SKILLS</div>
+                    <div class="h2 mb-0 outfit" id="totalSkills">0</div>
+                    <span class="text-muted small mt-2 d-block">Tracking progress...</span>
+                </div>
+            </div>
+            <div class="col-xl-6">
+                <div class="glass p-4 d-flex align-items-center justify-content-between h-100">
+                    <div>
+                        <div class="text-muted small fw-bold mb-1">HEALTH DISTRIBUTION</div>
+                        <div class="d-flex gap-2 mt-3" id="healthLegend"></div>
+                    </div>
+                    <div class="chart-wrap">
+                        <canvas id="mainHealthChart"></canvas>
+                        <div class="chart-center-text">
+                            <div class="text-muted small">Status</div>
+                            <div class="fw-bold outfit" id="overallStatusText">--</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-8">
+                <h4 class="outfit mb-4 d-flex align-items-center">
+                    <ion-icon name="list-outline" class="me-2"></ion-icon>Analysis Cards
+                </h4>
+                <div class="row g-4" id="skillsContainer">
+                    <div class="col-12 text-center py-5">
+                        <div class="spinner-border text-info"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <h4 class="outfit mb-4 d-flex align-items-center">
+                    <ion-icon name="time-outline" class="me-2"></ion-icon>Activity Log
+                </h4>
+                <div class="glass p-4" id="historyContainer">
+                    <p class="text-muted small">No recent activity detected.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal fade" id="addSkillModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content glass">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title outfit fw-bold">Add New Capability</h5><button type="button"
+                        class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="addSkillForm">
+                    <div class="modal-body">
+                        <div class="mb-4"><label class="form-label small text-muted">Skill Identifier</label><input
+                                type="text" id="skillName" class="form-control" placeholder="e.g. Distributed Systems"
+                                required></div>
+                        <div class="row g-3">
+                            <div class="col-6"><label class="form-label small text-muted">Self-Confidence
+                                    (0-100)</label><input type="number" id="confidenceScore" class="form-control"
+                                    min="0" max="100" value="80"></div>
+                            <div class="col-6"><label class="form-label small text-muted">Actual Perf.
+                                    (0-100)</label><input type="number" id="actualScore" class="form-control" min="0"
+                                    max="100" value="75"></div>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0"><button type="submit" class="btn btn-premium w-100">Launch
+                            Analysis</button></div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="practiceModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content glass">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title outfit fw-bold">Log Practice Session</h5><button type="button"
+                        class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="practiceForm"><input type="hidden" id="practiceSkillId">
+                    <div class="modal-body">
+                        <div class="mb-4"><label class="form-label small text-muted">Activity Type</label><select
+                                id="activityType" class="form-select">
+                                <option value="Project Implementation">Project Implementation</option>
+                                <option value="Tutorial / Reading">Tutorial / Reading</option>
+                                <option value="Quiz / Assessment">Quiz / Assessment</option>
+                                <option value="Mentoring Others">Mentoring Others</option>
+                            </select></div>
+                        <div class="mb-2"><label class="form-label small text-muted">Reflective Notes</label><textarea
+                                id="practiceNotes" class="form-control" rows="3"
+                                placeholder="What did you work on?"></textarea></div>
+                    </div>
+                    <div class="modal-footer border-0"><button type="submit" class="btn btn-premium w-100">Update
+                            Retention</button></div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let healthChart = null;
+
+        async function fetchAll() {
+            try {
+                const [skills, interventions, history] = await Promise.all([
+                    fetch('/skills').then(r => r.json()),
+                    fetch('/intervention').then(r => r.json()),
+                    fetch('/history').then(r => r.json())
+                ]);
+                updateStats(skills);
+                renderSkills(skills, interventions);
+                updateChart(skills);
+                renderHistory(history);
+            } catch (e) { console.error(e); }
+        }
+
+        function updateStats(skills) {
+            document.getElementById('totalSkills').textContent = skills.length;
+            if (skills.length > 0) {
+                const avgRetention = Math.round(100 - (skills.reduce((acc, s) => acc + s.decay_score, 0) / skills.length));
+                document.getElementById('avgRetention').textContent = avgRetention + '%';
+                const statusEl = document.getElementById('retentionStatus');
+                if (avgRetention > 80) statusEl.innerHTML = '<span class="stat-badge good">Optimal</span>';
+                else if (avgRetention > 50) statusEl.innerHTML = '<span class="stat-badge warn">Satisfactory</span>';
+                else statusEl.innerHTML = '<span class="stat-badge crit">Degrading</span>';
+                document.getElementById('overallStatusText').textContent = avgRetention > 70 ? 'Stable' : 'Risk';
+            }
+        }
+
+        function renderSkills(skills, interventions) {
+            const container = document.getElementById('skillsContainer');
+            container.innerHTML = skills.length ? '' : '<div class="col-12 text-center py-5"><div class="glass p-5"><ion-icon name="cube-outline" style="font-size: 3rem; color: var(--text-muted)"></ion-icon><p class="mt-3 text-muted">No data detected.</p></div></div>';
+            skills.forEach(skill => {
+                const intervention = interventions.find(i => i.skill_name === skill.skill_name);
+                const scoreColor = skill.decay_score > 60 ? 'var(--danger)' : skill.decay_score > 30 ? 'var(--warning)' : 'var(--success)';
+                container.insertAdjacentHTML('beforeend', `
+                    <div class="col-md-6"><div class="glass skill-card glass-hover">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <div class="skill-icon"><ion-icon name="rocket-outline"></ion-icon></div>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-action-small" onclick="openPracticeModal(${skill.id})"><ion-icon name="checkbox-outline"></ion-icon></button>
+                                <button class="btn btn-action-small" onclick="simulateDecay(${skill.id})"><ion-icon name="time-outline"></ion-icon></button>
+                            </div>
+                        </div>
+                        <h5 class="outfit fw-bold mb-1">${skill.skill_name}</h5>
+                        <span class="text-muted small d-block mb-3">Target Sync: ${new Date(skill.last_used).toLocaleDateString()}</span>
+                        <div class="d-flex justify-content-between small mb-1 mt-3"><span>Drift Probability</span><span style="color: ${scoreColor}" class="fw-bold">${Math.round(skill.decay_score)}%</span></div>
+                        <div class="decay-progress"><div class="decay-fill" style="width: ${skill.decay_score}%; background: ${scoreColor}"></div></div>
+                        <div class="row g-2 mb-3"><div class="col-6"><div class="text-muted small">CONFIDENCE</div><div class="outfit fw-bold">${skill.confidence_score}</div></div><div class="col-6"><div class="text-muted small">ACTUAL PK</div><div class="outfit fw-bold">${skill.actual_score}</div></div></div>
+                        ${intervention ? `<div class="intervention-box"><div class="text-danger fw-bold small mb-1 d-flex align-items-center"><ion-icon name="flash-outline" class="me-1"></ion-icon> ACTION REQUIRED</div>${intervention.suggestion}</div>` : ''}
+                    </div></div>`);
+            });
+        }
+
+        function renderHistory(history) {
+            const container = document.getElementById('historyContainer');
+            container.innerHTML = history.length ? '' : '<p class="text-muted small">No activities logged yet.</p>';
+            history.forEach(log => {
+                container.insertAdjacentHTML('beforeend', `
+                    <div class="history-item">
+                        <div class="d-flex justify-content-between align-items-start mb-1">
+                            <strong class="outfit small d-block">${log.skill_name}</strong>
+                            <span class="text-muted" style="font-size: 0.7rem">${new Date(log.date).toLocaleDateString()}</span>
+                        </div>
+                        <div class="small text-accent" style="color: var(--accent-secondary)">${log.activity_type}</div>
+                        ${log.notes ? `<div class="text-muted mt-1" style="font-size: 0.75rem italic">"${log.notes}"</div>` : ''}
+                    </div>`);
+            });
+        }
+
+        function updateChart(skills) {
+            const counts = [skills.filter(s => s.decay_score < 30).length, skills.filter(s => s.decay_score >= 30 && s.decay_score <= 60).length, skills.filter(s => s.decay_score > 60).length];
+            const ctx = document.getElementById('mainHealthChart').getContext('2d');
+            if (healthChart) healthChart.destroy();
+            healthChart = new Chart(ctx, { type: 'doughnut', data: { datasets: [{ data: counts, backgroundColor: ['#10b981', '#f59e0b', '#ef4444'], borderWidth: 0, hoverOffset: 10 }] }, options: { cutout: '80%', plugins: { legend: { display: false } } } });
+            document.getElementById('healthLegend').innerHTML = `<div class="small"><span style="color:#10b981">●</span> Stable (${counts[0]})</div><div class="small"><span style="color:#f59e0b">●</span> Drift (${counts[1]})</div><div class="small"><span style="color:#ef4444">●</span> Critical (${counts[2]})</div>`;
+        }
+
+        function openPracticeModal(id) {
+            document.getElementById('practiceSkillId').value = id;
+            new bootstrap.Modal(document.getElementById('practiceModal')).show();
+        }
+
+        async function simulateDecay(id) {
+            await fetch(`/simulate-decay/${id}`, { method: 'POST' });
+            fetchAll();
+        }
+
+        document.getElementById('addSkillForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const payload = { skill_name: document.getElementById('skillName').value, confidence_score: parseInt(document.getElementById('confidenceScore').value || 80), actual_score: parseInt(document.getElementById('actualScore').value || 75) };
+            const r = await fetch('/add-skill', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+            if (r.ok) { bootstrap.Modal.getInstance(document.getElementById('addSkillModal')).hide(); e.target.reset(); fetchAll(); }
+        });
+
+        document.getElementById('practiceForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const payload = { skill_id: parseInt(document.getElementById('practiceSkillId').value), activity_type: document.getElementById('activityType').value, notes: document.getElementById('practiceNotes').value };
+            const r = await fetch('/practice', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+            if (r.ok) { bootstrap.Modal.getInstance(document.getElementById('practiceModal')).hide(); e.target.reset(); fetchAll(); }
+        });
+
+        fetchAll();
+    </script>
+</body>
+
+</html>

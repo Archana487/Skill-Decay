@@ -1,0 +1,33 @@
+### Skill Decay Tracker API Tests
+
+# Add a New Skill
+POST http://127.0.0.1:5000/add-skill
+Content-Type: application/json
+
+{
+    "skill_name": "Python Flask",
+    "confidence_score": 80,
+    "actual_score": 75
+}
+
+###
+
+# Add another skill that is "old" (Manual check: you might need to manually edit DB date to see decay)
+POST http://127.0.0.1:5000/add-skill
+Content-Type: application/json
+
+{
+    "skill_name": "SQLAlchemy",
+    "confidence_score": 90,
+    "actual_score": 85
+}
+
+###
+
+# Get all skills with decay scores
+GET http://127.0.0.1:5000/skills
+
+###
+
+# Get interventions for skills needing practice
+GET http://127.0.0.1:5000/intervention

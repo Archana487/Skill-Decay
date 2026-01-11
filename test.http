@@ -1,0 +1,18 @@
+### 1️⃣ Add a new skill
+POST http://127.0.0.1:5000/add-skill
+Content-Type: application/json
+
+{
+  "skill_name": "SQL Joins"
+}
+
+### 2️⃣ Add another skill
+POST http://127.0.0.1:5000/add-skill
+Content-Type: application/json
+
+{
+  "skill_name": "Python Loops"
+}
+
+### 3️⃣ Get all skills
+GET http://127.0.0.1:5000/skills

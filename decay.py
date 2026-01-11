@@ -22,3 +22,19 @@ def calculate_decay(skill):
     
     # Ensure the score stays within 0-100
     return max(0, min(100, final_score))
+
+def forecast_decay(skill, days_ahead):
+    """
+    Predicts what the decay score will be in X days.
+    """
+    days_since_used = (datetime.utcnow() - skill.last_used).days + days_ahead
+    
+    # Base decay from time
+    decay_score = days_since_used * 2
+    
+    # Mitigation from actual skill level
+    mitigation = skill.actual_score * 0.5
+    
+    final_score = decay_score - mitigation
+    
+    return max(0, min(100, final_score))

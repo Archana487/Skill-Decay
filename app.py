@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify, render_template
 from models import db, Skill, PracticeLog
-from decay import calculate_decay
+from decay import calculate_decay, forecast_decay
 from intervention import suggest_intervention
 from datetime import datetime
 import os
@@ -59,6 +59,7 @@ def get_skills():
     
     for skill in skills:
         decay_score = calculate_decay(skill)
+        forecast_7d = forecast_decay(skill, 7)
         output.append({
             "id": skill.id,
             "skill_name": skill.skill_name,
@@ -66,7 +67,11 @@ def get_skills():
             "last_used": skill.last_used.isoformat(),
             "confidence_score": skill.confidence_score,
             "actual_score": skill.actual_score,
-            "decay_score": decay_score
+            "decay_score": decay_score,
+            "forecast_7d": forecast_7d,
+            "xp": skill.xp,
+            "level": skill.level,
+            "streak": skill.streak
         })
         
     return jsonify(output)
@@ -122,12 +127,46 @@ def log_practice():
     )
     
     # Reset last_used for decay calculation
-    skill.last_used = datetime.utcnow()
+    now = datetime.utcnow()
+    
+    # Calculate XP Gain
+    xp_gain = 25 # Base XP
+    if data.get('activity_type') == 'Project Implementation': xp_gain = 50
+    elif data.get('activity_type') == 'Mentoring Others': xp_gain = 40
+    
+    skill.xp += xp_gain
+    
+    # Level Up Logic (approximate: Level * 100 XP)
+    if skill.xp >= (skill.level * 100):
+        skill.level += 1
+        level_up = True
+    else:
+        level_up = False
+        
+    # Streak Logic
+    if skill.last_practice_date:
+        delta = (now.date() - skill.last_practice_date.date()).days
+        if delta == 1:
+            skill.streak += 1
+        elif delta > 1:
+            skill.streak = 1
+    else:
+        skill.streak = 1
+        
+    skill.last_practice_date = now
+    skill.last_used = now
     
     db.session.add(new_log)
     db.session.commit()
     
-    return jsonify({"message": "Practice logged successfully", "id": new_log.id}), 201
+    return jsonify({
+        "message": "Practice logged successfully", 
+        "id": new_log.id,
+        "xp_gain": xp_gain,
+        "level_up": level_up,
+        "new_level": skill.level,
+        "new_streak": skill.streak
+    }), 201
 
 @app.route('/history', methods=['GET'])
 def get_history():

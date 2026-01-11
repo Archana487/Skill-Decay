@@ -14,6 +14,12 @@ class Skill(db.Model):
     confidence_score = db.Column(db.Integer, nullable=False)
     actual_score = db.Column(db.Integer, nullable=False)
     
+    # Gamification and Tracking
+    xp = db.Column(db.Integer, default=0)
+    level = db.Column(db.Integer, default=1)
+    streak = db.Column(db.Integer, default=0)
+    last_practice_date = db.Column(db.DateTime, nullable=True)
+    
     # Relationship to logs
     logs = db.relationship('PracticeLog', backref='skill', lazy=True, cascade="all, delete-orphan")
 

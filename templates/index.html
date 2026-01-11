@@ -20,27 +20,107 @@
 
     <style>
         :root {
-            --bg-deep: #0f172a;
-            --bg-card: rgba(30, 41, 59, 0.7);
-            --accent-primary: #6366f1;
-            --accent-secondary: #06b6d4;
+            --bg-deep: #020617;
+            --bg-card: rgba(15, 23, 42, 0.6);
+            --accent-primary: #818cf8;
+            --accent-secondary: #2dd4bf;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
-            --border-glass: rgba(255, 255, 255, 0.1);
+            --border-glass: rgba(255, 255, 255, 0.08);
+            --border-glow: rgba(129, 140, 248, 0.2);
             --success: #10b981;
             --warning: #f59e0b;
             --danger: #ef4444;
+            --glare: rgba(255, 255, 255, 0.03);
         }
 
         body {
             background-color: var(--bg-deep);
-            background-image:
-                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(6, 182, 212, 0.1) 0px, transparent 50%);
             color: var(--text-main);
             font-family: 'Inter', sans-serif;
             min-height: 100vh;
             overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Moving Mesh Background */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background:
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(45, 212, 191, 0.1) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(99, 102, 241, 0.1) 0px, transparent 50%),
+                radial-gradient(at 0% 100%, rgba(45, 212, 191, 0.1) 0px, transparent 50%);
+            animation: meshFlow 20s ease-in-out infinite alternate;
+        }
+
+        @keyframes meshFlow {
+            0% {
+                transform: scale(1);
+            }
+
+            100% {
+                transform: scale(1.1);
+            }
+        }
+
+        .glow-orb {
+            position: fixed;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: -1;
+            filter: blur(60px);
+            pointer-events: none;
+        }
+
+        #orb1 {
+            top: -100px;
+            left: -100px;
+            animation: float 15s infinite;
+        }
+
+        #orb2 {
+            bottom: -100px;
+            right: -100px;
+            animation: float 20s infinite reverse;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translate(0, 0);
+            }
+
+            50% {
+                transform: translate(50px, 100px);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+            /* Important: Start invisible */
         }
 
         h1,
@@ -51,131 +131,314 @@
         h6,
         .outfit {
             font-family: 'Outfit', sans-serif;
+            letter-spacing: -0.02em;
         }
 
         .glass {
             background: var(--bg-card);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--border-glass);
-            border-radius: 20px;
+            border-radius: 24px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, var(--glare), transparent);
+            transition: 0.5s;
+        }
+
+        .glass:hover::after {
+            left: 100%;
         }
 
         .glass-hover {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
         }
 
         .glass-hover:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 12px 40px -10px rgba(0, 0, 0, 0.5);
-            border-color: rgba(255, 255, 255, 0.2);
-            background: rgba(30, 41, 59, 0.9);
+            transform: translateY(-10px) scale(1.02);
+            border-color: var(--border-glow);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(129, 140, 248, 0.1);
+            background: rgba(30, 41, 59, 0.8);
         }
 
         .page-header {
-            padding: 3rem 0;
+            padding: 4rem 0 2rem 0;
         }
 
         .stat-badge {
-            font-size: 0.8rem;
-            font-weight: 600;
-            padding: 4px 12px;
-            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 6px 14px;
+            border-radius: 30px;
             text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
         .stat-badge.good {
-            background: rgba(16, 185, 129, 0.2);
+            background: rgba(16, 185, 129, 0.1);
             color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.2);
         }
 
         .stat-badge.warn {
-            background: rgba(245, 158, 11, 0.2);
+            background: rgba(245, 158, 11, 0.1);
             color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.2);
         }
 
         .stat-badge.crit {
-            background: rgba(239, 68, 68, 0.2);
+            background: rgba(239, 68, 68, 0.1);
             color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.2);
         }
 
         .skill-card {
             height: 100%;
             display: flex;
             flex-direction: column;
-            padding: 1.5rem;
+            padding: 2rem;
         }
 
         .skill-icon {
-            width: 40px;
-            height: 40px;
+            width: 48px;
+            height: 48px;
             background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            border-radius: 12px;
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 16px rgba(99, 102, 241, 0.3);
+            color: white;
         }
 
         .decay-progress {
-            height: 6px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 3px;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 5px;
             margin: 1.5rem 0;
             overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .decay-fill {
             height: 100%;
-            transition: width 1s ease-in-out;
+            transition: width 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 0 15px currentColor;
         }
 
         .intervention-box {
             margin-top: auto;
-            background: rgba(239, 68, 68, 0.1);
+            background: rgba(239, 68, 68, 0.05);
             border: 1px solid rgba(239, 68, 68, 0.2);
-            border-radius: 12px;
-            padding: 12px;
-            font-size: 0.85rem;
-            animation: fadeIn 0.5s ease-out;
+            border-radius: 16px;
+            padding: 16px;
+            font-size: 0.9rem;
+            animation: slideIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
         }
 
         .btn-premium {
-            background: linear-gradient(135deg, var(--accent-primary), #4f46e5);
+            background: linear-gradient(135deg, var(--accent-primary), #6366f1);
             color: white;
             border: none;
-            border-radius: 10px;
-            padding: 0.6rem 1.5rem;
-            font-weight: 600;
-            transition: all 0.2s;
+            border-radius: 12px;
+            padding: 0.75rem 2rem;
+            font-weight: 700;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 20px -10px rgba(99, 102, 241, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-size: 0.85rem;
         }
 
         .btn-premium:hover {
-            opacity: 0.9;
-            transform: scale(1.02);
+            opacity: 1;
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px -10px rgba(99, 102, 241, 0.6);
             color: white;
         }
 
         .btn-action-small {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.03);
             border: 1px solid var(--border-glass);
             color: var(--text-muted);
-            font-size: 0.75rem;
-            border-radius: 8px;
-            padding: 2px 10px;
+            font-size: 0.9rem;
+            border-radius: 10px;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
         }
 
         .btn-action-small:hover {
             color: white;
             background: rgba(255, 255, 255, 0.1);
+            border-color: var(--accent-secondary);
+            transform: scale(1.1);
+        }
+
+        .history-item {
+            padding: 1.25rem;
+            border-left: 3px solid var(--accent-primary);
+            margin-bottom: 1.25rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 0 16px 16px 0;
+            transition: all 0.3s;
+        }
+
+        .history-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateX(5px);
+        }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            z-index: 10000;
+        }
+
+        .custom-toast {
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-glass);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            animation: slideIn 0.4s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+
+            to {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+        }
+
+        /* Chart Tweaks */
+        #mainHealthChart {
+            filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.2));
+        }
+
+        /* Gamification Styles */
+        .xp-container {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 4px;
+        }
+
+        .xp-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-secondary), #4ade80);
+            transition: width 1s ease-out;
+        }
+
+        .streak-badge {
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 4px 10px rgba(239, 68, 68, 0.2);
+        }
+
+        .forecast-pill {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-glass);
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        .intervention-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
+            padding: 10px;
+            margin-bottom: 8px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .intervention-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: var(--accent-primary);
+            transform: scale(1.02);
+        }
+
+        .tier-tag {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            font-weight: 800;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-bottom: 4px;
+            display: inline-block;
+        }
+
+        .tier-micro {
+            background: rgba(45, 212, 191, 0.1);
+            color: #2dd4bf;
+        }
+
+        .tier-maintenance {
+            background: rgba(99, 102, 241, 0.1);
+            color: #818cf8;
+        }
+
+        .tier-deep {
+            background: rgba(239, 68, 68, 0.1);
+            color: #f87171;
         }
 
         .chart-wrap {
             position: relative;
-            width: 160px;
-            height: 160px;
-            margin: 0 auto;
+            height: 200px;
+            width: 200px;
         }
 
         .chart-center-text {
@@ -184,100 +447,83 @@
             left: 50%;
             transform: translate(-50%, -50%);
             text-align: center;
-        }
-
-        .history-item {
-            padding: 1rem;
-            border-left: 2px solid var(--accent-primary);
-            margin-bottom: 1rem;
-            background: rgba(255, 255, 255, 0.02);
-            border-radius: 0 12px 12px 0;
-            animation: fadeIn 0.4s ease-out;
-        }
-
-        .form-control,
-        .form-select {
-            background: rgba(15, 23, 42, 0.5);
-            border: 1px solid var(--border-glass);
-            color: white;
-            border-radius: 10px;
-        }
-
-        .form-control:focus,
-        .form-select:focus {
-            background: rgba(15, 23, 42, 0.8);
-            border-color: var(--accent-primary);
-            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
-            color: white;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            pointer-events: none;
         }
     </style>
 </head>
 
 <body>
+    <div class="glow-orb" id="orb1"></div>
+    <div class="glow-orb" id="orb2"></div>
+    <div class="toast-container" id="toastContainer"></div>
+
     <div class="container pb-5">
         <header class="page-header row align-items-center">
             <div class="col-lg-8">
-                <span class="text-accent outfit fw-bold"
-                    style="color: var(--accent-secondary); letter-spacing: 2px;">ANALYTICS ENGINE</span>
-                <h1 class="display-5 fw-bold mt-1">Skill Decay <span style="color: var(--accent-primary)">Pro</span>
+                <div class="d-flex align-items-center gap-3 mb-2">
+                    <span class="stat-badge good"
+                        style="background: rgba(99, 102, 241, 0.1); color: var(--accent-primary); border-color: rgba(99, 102, 241, 0.2);">System
+                        Active</span>
+                    <span class="text-muted small outfit fw-bold" style="letter-spacing: 2px;">V2.0 PRO ENGINE</span>
+                </div>
+                <h1 class="display-4 fw-bold mt-1">Skill Decay <span
+                        style="background: linear-gradient(to right, var(--accent-primary), var(--accent-secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Pro</span>
                 </h1>
-                <p class="text-muted lead">Smart monitoring for continuous learning and retention.</p>
+                <p class="text-muted lead">Advanced retention analytics and capability drift monitoring.</p>
             </div>
             <div class="col-lg-4 text-lg-end">
                 <button class="btn btn-premium" data-bs-toggle="modal" data-bs-target="#addSkillModal">
-                    <ion-icon name="add-outline" class="me-1"></ion-icon>New Analysis
+                    <ion-icon name="analytics-outline" class="me-2"
+                        style="font-size: 1.2rem; vertical-align: middle;"></ion-icon>New Capability Analysis
                 </button>
             </div>
         </header>
 
         <div class="row g-4 mb-5">
             <div class="col-xl-3 col-md-6">
-                <div class="glass p-4 h-100">
-                    <div class="text-muted small fw-bold mb-2">AVG RETENTION</div>
-                    <div class="h2 mb-0 outfit" id="avgRetention">--%</div>
+                <div class="glass p-4 h-100 glass-hover">
+                    <div class="text-muted small fw-bold mb-2">NETWORK AVG RETENTION</div>
+                    <div class="h1 mb-1 outfit fw-bold" id="avgRetention">--%</div>
                     <div id="retentionStatus" class="mt-2"></div>
+                    <div class="mt-4 pt-3 border-top border-glass small text-muted">
+                        <ion-icon name="trending-up-outline" class="me-1"></ion-icon> Trend: Stable
+                    </div>
                 </div>
             </div>
             <div class="col-xl-3 col-md-6">
-                <div class="glass p-4 h-100">
-                    <div class="text-muted small fw-bold mb-2">ACTIVE SKILLS</div>
-                    <div class="h2 mb-0 outfit" id="totalSkills">0</div>
-                    <span class="text-muted small mt-2 d-block">Tracking progress...</span>
+                <div class="glass p-4 h-100 glass-hover">
+                    <div class="text-muted small fw-bold mb-2">ACTIVE CAPABILITIES</div>
+                    <div class="h1 mb-1 outfit fw-bold" id="totalSkills">0</div>
+                    <span class="text-muted small d-block mb-4">Tracking live data...</span>
+                    <div class="mt-auto pt-3 border-top border-glass small text-muted">
+                        <ion-icon name="server-outline" class="me-1"></ion-icon> DB Status: Connected
+                    </div>
                 </div>
             </div>
             <div class="col-xl-6">
-                <div class="glass p-4 d-flex align-items-center justify-content-between h-100">
-                    <div>
-                        <div class="text-muted small fw-bold mb-1">HEALTH DISTRIBUTION</div>
-                        <div class="d-flex gap-2 mt-3" id="healthLegend"></div>
+                <div class="glass p-4 d-flex align-items-center justify-content-between h-100 glass-hover">
+                    <div class="flex-grow-1">
+                        <div class="text-muted small fw-bold mb-3">HEALTH DISTRIBUTION MAP</div>
+                        <div class="d-flex flex-column gap-3" id="healthLegend"></div>
                     </div>
                     <div class="chart-wrap">
                         <canvas id="mainHealthChart"></canvas>
                         <div class="chart-center-text">
-                            <div class="text-muted small">Status</div>
-                            <div class="fw-bold outfit" id="overallStatusText">--</div>
+                            <div class="text-muted"
+                                style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase;">System Health
+                            </div>
+                            <div class="h4 fw-bold outfit mb-0" id="overallStatusText">--</div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="row">
+        <div class="row g-5">
             <div class="col-lg-8">
-                <h4 class="outfit mb-4 d-flex align-items-center">
-                    <ion-icon name="list-outline" class="me-2"></ion-icon>Analysis Cards
+                <h4 class="outfit mb-4 d-flex align-items-center fw-bold">
+                    <ion-icon name="grid-outline" class="me-2"
+                        style="color: var(--accent-primary)"></ion-icon>Capability Analysis Matrix
                 </h4>
                 <div class="row g-4" id="skillsContainer">
                     <div class="col-12 text-center py-5">
@@ -356,6 +602,25 @@
     <script>
         let healthChart = null;
 
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'custom-toast';
+            const icon = type === 'success' ? 'checkmark-circle' : type === 'error' ? 'alert-circle' : 'information-circle';
+            const color = type === 'success' ? 'var(--success)' : type === 'error' ? 'var(--danger)' : 'var(--accent-primary)';
+
+            toast.innerHTML = `
+                <ion-icon name="${icon}" style="color: ${color}; font-size: 1.5rem"></ion-icon>
+                <span>${message}</span>
+            `;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.4s ease-in forwards';
+                setTimeout(() => toast.remove(), 400);
+            }, 3000);
+        }
+
         async function fetchAll() {
             try {
                 const [skills, interventions, history] = await Promise.all([
@@ -367,7 +632,10 @@
                 renderSkills(skills, interventions);
                 updateChart(skills);
                 renderHistory(history);
-            } catch (e) { console.error(e); }
+            } catch (e) {
+                console.error(e);
+                showToast('Failed to sync with engine', 'error');
+            }
         }
 
         function updateStats(skills) {
@@ -376,60 +644,158 @@
                 const avgRetention = Math.round(100 - (skills.reduce((acc, s) => acc + s.decay_score, 0) / skills.length));
                 document.getElementById('avgRetention').textContent = avgRetention + '%';
                 const statusEl = document.getElementById('retentionStatus');
-                if (avgRetention > 80) statusEl.innerHTML = '<span class="stat-badge good">Optimal</span>';
-                else if (avgRetention > 50) statusEl.innerHTML = '<span class="stat-badge warn">Satisfactory</span>';
-                else statusEl.innerHTML = '<span class="stat-badge crit">Degrading</span>';
-                document.getElementById('overallStatusText').textContent = avgRetention > 70 ? 'Stable' : 'Risk';
+                if (avgRetention > 80) statusEl.innerHTML = '<span class="stat-badge good">Optimal Health</span>';
+                else if (avgRetention > 50) statusEl.innerHTML = '<span class="stat-badge warn">Attention Needed</span>';
+                else statusEl.innerHTML = '<span class="stat-badge crit">Critical Degradation</span>';
+                document.getElementById('overallStatusText').textContent = avgRetention > 70 ? 'STABLE' : 'RISK';
+                document.getElementById('overallStatusText').style.color = avgRetention > 70 ? 'var(--accent-secondary)' : 'var(--danger)';
             }
         }
 
         function renderSkills(skills, interventions) {
             const container = document.getElementById('skillsContainer');
-            container.innerHTML = skills.length ? '' : '<div class="col-12 text-center py-5"><div class="glass p-5"><ion-icon name="cube-outline" style="font-size: 3rem; color: var(--text-muted)"></ion-icon><p class="mt-3 text-muted">No data detected.</p></div></div>';
-            skills.forEach(skill => {
+            container.innerHTML = skills.length ? '' : `
+                <div class="col-12 text-center py-5">
+                    <div class="glass p-5">
+                        <ion-icon name="layers-outline" style="font-size: 4rem; color: var(--text-muted); opacity: 0.3"></ion-icon>
+                        <h5 class="mt-4 text-muted outfit">No Capability Data Detected</h5>
+                        <p class="text-muted small">Initialize your first capability analysis to begin monitoring.</p>
+                    </div>
+                </div>`;
+
+            skills.forEach((skill, index) => {
                 const intervention = interventions.find(i => i.skill_name === skill.skill_name);
                 const scoreColor = skill.decay_score > 60 ? 'var(--danger)' : skill.decay_score > 30 ? 'var(--warning)' : 'var(--success)';
+                const xpPercent = skill.xp % 100;
+
                 container.insertAdjacentHTML('beforeend', `
-                    <div class="col-md-6"><div class="glass skill-card glass-hover">
-                        <div class="d-flex justify-content-between align-items-center mb-1">
+                    <div class="col-md-6 fade-in-up" style="animation-delay: ${index * 0.1}s">
+                    <div class="glass skill-card glass-hover">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
                             <div class="skill-icon"><ion-icon name="rocket-outline"></ion-icon></div>
-                            <div class="d-flex gap-2">
-                                <button class="btn btn-action-small" onclick="openPracticeModal(${skill.id})"><ion-icon name="checkbox-outline"></ion-icon></button>
-                                <button class="btn btn-action-small" onclick="simulateDecay(${skill.id})"><ion-icon name="time-outline"></ion-icon></button>
+                            <div class="d-flex gap-2 align-items-center">
+                                ${skill.streak > 0 ? `<div class="streak-badge"><ion-icon name="flame"></ion-icon>${skill.streak}d</div>` : ''}
+                                <button class="btn btn-action-small" onclick="openPracticeModal(${skill.id})" title="Log Practice">
+                                    <ion-icon name="flash-outline"></ion-icon>
+                                </button>
+                                <button class="btn btn-action-small" onclick="simulateDecay(${skill.id})" title="Simulate 30 Day Drift">
+                                    <ion-icon name="time-outline"></ion-icon>
+                                </button>
                             </div>
                         </div>
-                        <h5 class="outfit fw-bold mb-1">${skill.skill_name}</h5>
-                        <span class="text-muted small d-block mb-3">Target Sync: ${new Date(skill.last_used).toLocaleDateString()}</span>
-                        <div class="d-flex justify-content-between small mb-1 mt-3"><span>Drift Probability</span><span style="color: ${scoreColor}" class="fw-bold">${Math.round(skill.decay_score)}%</span></div>
-                        <div class="decay-progress"><div class="decay-fill" style="width: ${skill.decay_score}%; background: ${scoreColor}"></div></div>
-                        <div class="row g-2 mb-3"><div class="col-6"><div class="text-muted small">CONFIDENCE</div><div class="outfit fw-bold">${skill.confidence_score}</div></div><div class="col-6"><div class="text-muted small">ACTUAL PK</div><div class="outfit fw-bold">${skill.actual_score}</div></div></div>
-                        ${intervention ? `<div class="intervention-box"><div class="text-danger fw-bold small mb-1 d-flex align-items-center"><ion-icon name="flash-outline" class="me-1"></ion-icon> ACTION REQUIRED</div>${intervention.suggestion}</div>` : ''}
-                    </div></div>`);
+
+                        <div class="d-flex justify-content-between align-items-end mb-1">
+                            <h4 class="outfit fw-bold mb-0">${skill.skill_name}</h4>
+                            <div class="text-muted small fw-bold">LVL ${skill.level}</div>
+                        </div>
+
+                        <div class="xp-container mb-3">
+                            <div class="xp-bar" style="width: ${xpPercent}%"></div>
+                        </div>
+
+                        <span class="text-muted small d-block mb-3">
+                            <ion-icon name="calendar-clear-outline" class="me-1"></ion-icon> Last Refined: ${new Date(skill.last_used).toLocaleDateString()}
+                        </span>
+
+                        <div class="d-flex justify-content-between align-items-center mb-2 mt-3">
+                            <div class="uppercase fw-bold text-muted" style="font-size: 0.65rem">Retention Drift</div>
+                            <div class="forecast-pill">7D FORECAST: ${Math.round(skill.forecast_7d)}%</div>
+                        </div>
+
+                        <div class="d-flex justify-content-between small mb-1 fw-bold">
+                            <span class="text-muted">Current</span>
+                            <span style="color: ${scoreColor}">${Math.round(skill.decay_score)}%</span>
+                        </div>
+                        <div class="decay-progress mb-3">
+                            <div class="decay-fill" style="width: ${skill.decay_score}%; background: ${scoreColor}; color: ${scoreColor}"></div>
+                        </div>
+
+                        ${intervention && intervention.suggestion.length ? `
+                                <div class="intervention-box">
+                                    <div class="text-muted fw-bold small mb-2 d-flex align-items-center" style="letter-spacing: 1px">
+                                        <ion-icon name="construct-outline" class="me-1" style="color: var(--accent-primary)"></ion-icon> PATHWAY OPTIONS
+                                    </div>
+                                    <div class="intervention-list">
+                                        ${intervention.suggestion.map(s => `
+                                            <div class="intervention-item">
+                                                <div class="tier-tag tier-${s.tier.toLowerCase().replace(' ', '-')}">${s.tier}</div>
+                                                <div class="small text-main lh-sm mb-1">${s.task}</div>
+                                                <div class="d-flex justify-content-between align-items-center mt-1">
+                                                    <span class="text-muted" style="font-size: 0.65rem"><ion-icon name="time-outline"></ion-icon> ${s.time}</span>
+                                                    <span class="text-success fw-bold" style="font-size: 0.65rem">+${s.xp} XP</span>
+                                                </div>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>` : ''}
+                    </div>
+                    </div > `);
             });
         }
 
         function renderHistory(history) {
             const container = document.getElementById('historyContainer');
-            container.innerHTML = history.length ? '' : '<p class="text-muted small">No activities logged yet.</p>';
+            container.innerHTML = history.length ? '' : `
+                    < div class= "text-center py-4" >
+                    <ion-icon name="clipboard-outline" style="font-size: 2rem; color: var(--text-muted); opacity: 0.2"></ion-icon>
+                    <p class="text-muted small mt-2">Buffer Empty</p>
+                </div > `;
+
             history.forEach(log => {
                 container.insertAdjacentHTML('beforeend', `
                     <div class="history-item">
                         <div class="d-flex justify-content-between align-items-start mb-1">
-                            <strong class="outfit small d-block">${log.skill_name}</strong>
-                            <span class="text-muted" style="font-size: 0.7rem">${new Date(log.date).toLocaleDateString()}</span>
+                            <strong class="outfit small d-block fw-bold">${log.skill_name}</strong>
+                            <span class="text-muted" style="font-size: 0.65rem">${new Date(log.date).toLocaleDateString()}</span>
                         </div>
-                        <div class="small text-accent" style="color: var(--accent-secondary)">${log.activity_type}</div>
-                        ${log.notes ? `<div class="text-muted mt-1" style="font-size: 0.75rem italic">"${log.notes}"</div>` : ''}
-                    </div>`);
+                        <div class="small fw-bold" style="color: var(--accent-secondary); font-size: 0.7rem">${log.activity_type.toUpperCase()}</div>
+                        ${log.notes ? `<div class="text-muted mt-2 lh-sm" style="font-size: 0.75rem; font-style: italic">"${log.notes}"</div>` : ''}
+                    </div > `);
             });
         }
 
         function updateChart(skills) {
-            const counts = [skills.filter(s => s.decay_score < 30).length, skills.filter(s => s.decay_score >= 30 && s.decay_score <= 60).length, skills.filter(s => s.decay_score > 60).length];
+            const counts = [
+                skills.filter(s => s.decay_score < 30).length,
+                skills.filter(s => s.decay_score >= 30 && s.decay_score <= 60).length,
+                skills.filter(s => s.decay_score > 60).length
+            ];
             const ctx = document.getElementById('mainHealthChart').getContext('2d');
             if (healthChart) healthChart.destroy();
-            healthChart = new Chart(ctx, { type: 'doughnut', data: { datasets: [{ data: counts, backgroundColor: ['#10b981', '#f59e0b', '#ef4444'], borderWidth: 0, hoverOffset: 10 }] }, options: { cutout: '80%', plugins: { legend: { display: false } } } });
-            document.getElementById('healthLegend').innerHTML = `<div class="small"><span style="color:#10b981">●</span> Stable (${counts[0]})</div><div class="small"><span style="color:#f59e0b">●</span> Drift (${counts[1]})</div><div class="small"><span style="color:#ef4444">●</span> Critical (${counts[2]})</div>`;
+            healthChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    datasets: [{
+                        data: counts,
+                        backgroundColor: ['#10b981', '#f59e0b', '#ef4444'],
+                        borderWidth: 0,
+                        hoverOffset: 12,
+                        borderRadius: 5
+                    }]
+                },
+                options: {
+                    cutout: '82%',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    animation: { animateRotate: true, duration: 2000 }
+                }
+            });
+
+            document.getElementById('healthLegend').innerHTML = `
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="small d-flex align-items-center"><span style="color:#10b981; font-size: 1.2rem; line-height: 1;" class="me-2">●</span> Stable Zone</div>
+                    <div class="fw-bold outfit">${counts[0]}</div>
+                </div>
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="small d-flex align-items-center"><span style="color:#f59e0b; font-size: 1.2rem; line-height: 1;" class="me-2">●</span> Drift Warning</div>
+                    <div class="fw-bold outfit">${counts[1]}</div>
+                </div>
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="small d-flex align-items-center"><span style="color:#ef4444; font-size: 1.2rem; line-height: 1;" class="me-2">●</span> Critical Risk</div>
+                    <div class="fw-bold outfit">${counts[2]}</div>
+                </div>
+            `;
         }
 
         function openPracticeModal(id) {
@@ -438,22 +804,59 @@
         }
 
         async function simulateDecay(id) {
-            await fetch(`/simulate-decay/${id}`, { method: 'POST' });
-            fetchAll();
+            try {
+                await fetch(`/simulate-decay/${id}`, { method: 'POST' });
+                showToast('Drift simulation successful', 'info');
+                fetchAll();
+            } catch (e) { showToast('Engine error', 'error'); }
         }
 
         document.getElementById('addSkillForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const payload = { skill_name: document.getElementById('skillName').value, confidence_score: parseInt(document.getElementById('confidenceScore').value || 80), actual_score: parseInt(document.getElementById('actualScore').value || 75) };
-            const r = await fetch('/add-skill', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-            if (r.ok) { bootstrap.Modal.getInstance(document.getElementById('addSkillModal')).hide(); e.target.reset(); fetchAll(); }
+            const payload = {
+                skill_name: document.getElementById('skillName').value,
+                confidence_score: parseInt(document.getElementById('confidenceScore').value || 80),
+                actual_score: parseInt(document.getElementById('actualScore').value || 75)
+            };
+            try {
+                const r = await fetch('/add-skill', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (r.ok) {
+                    showToast('Capability added to matrix', 'success');
+                    bootstrap.Modal.getInstance(document.getElementById('addSkillModal')).hide();
+                    e.target.reset();
+                    fetchAll();
+                }
+            } catch (e) { showToast('Transmission failed', 'error'); }
         });
 
         document.getElementById('practiceForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const payload = { skill_id: parseInt(document.getElementById('practiceSkillId').value), activity_type: document.getElementById('activityType').value, notes: document.getElementById('practiceNotes').value };
-            const r = await fetch('/practice', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-            if (r.ok) { bootstrap.Modal.getInstance(document.getElementById('practiceModal')).hide(); e.target.reset(); fetchAll(); }
+            const payload = {
+                skill_id: parseInt(document.getElementById('practiceSkillId').value),
+                activity_type: document.getElementById('activityType').value,
+                notes: document.getElementById('practiceNotes').value
+            };
+            try {
+                const r = await fetch('/practice', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await r.json();
+                if (r.ok) {
+                    showToast(`Retention sync complete! + ${result.xp_gain} XP`, 'success');
+                    if (result.level_up) {
+                        setTimeout(() => showToast(`LEVEL UP! Now Level ${result.new_level} 🚀`, 'success'), 500);
+                    }
+                    bootstrap.Modal.getInstance(document.getElementById('practiceModal')).hide();
+                    e.target.reset();
+                    fetchAll();
+                }
+            } catch (e) { showToast('Sync failed', 'error'); }
         });
 
         fetchAll();

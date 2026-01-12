@@ -10,9 +10,15 @@ class Skill(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     skill_name = db.Column(db.String(100), nullable=False)
     date_learned = db.Column(db.DateTime, default=datetime.utcnow)
+    first_learned = db.Column(db.DateTime, default=datetime.utcnow)
     last_used = db.Column(db.DateTime, default=datetime.utcnow)
     confidence_score = db.Column(db.Integer, nullable=False)
     actual_score = db.Column(db.Integer, nullable=False)
+    
+    # Intelligence Engine Metrics
+    avg_task_time_seconds = db.Column(db.Float, default=300.0)
+    error_rate = db.Column(db.Float, default=0.0) # 0.0 to 1.0
+    context_quality = db.Column(db.String(20), default="low") # low, medium, high
     
     # Gamification and Tracking
     xp = db.Column(db.Integer, default=0)

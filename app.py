@@ -49,30 +49,59 @@ def add_skill():
     
     return jsonify({"message": "Skill added successfully!", "id": new_skill.id}), 201
 
+from datetime import datetime, timedelta
+from engine import compute_skill_metrics
+
+# ... imports ...
+
 @app.route('/skills', methods=['GET'])
 def get_skills():
     """
-    Endpoint to retrieve all skills with their calculated decay scores.
+    Endpoint to retrieve all skills using the Skill Decay Intelligence Engine.
     """
     skills = Skill.query.all()
     output = []
     
     for skill in skills:
-        decay_score = calculate_decay(skill)
-        forecast_7d = forecast_decay(skill, 7)
-        output.append({
-            "id": skill.id,
+        # Calculate Input Metrics
+        now = datetime.utcnow()
+        days_since_practice = (now - skill.last_used).days
+        
+        # Count practice logs in last 30 days
+        practice_count_30d = PracticeLog.query.filter(
+            PracticeLog.skill_id == skill.id,
+            PracticeLog.date >= (now - timedelta(days=30))
+        ).count()
+        
+        # Construct Engine Input
+        engine_input = {
             "skill_name": skill.skill_name,
+            "current_proficiency": skill.actual_score,
+            "last_practice_days_ago": days_since_practice,
+            "practice_events_last_30_days": practice_count_30d,
+            "real_world_usage_last_30_days": practice_count_30d, # Approx
+            "avg_task_time_seconds": getattr(skill, 'avg_task_time_seconds', 300),
+            "error_rate": getattr(skill, 'error_rate', 0.0),
+            "context_quality": getattr(skill, 'context_quality', 'low')
+        }
+        
+        # Get Engine Computation
+        metrics = compute_skill_metrics(engine_input)
+        
+        # Merge with System ID and Gamification Data
+        metrics.update({
+            "id": skill.id,
             "date_learned": skill.date_learned.isoformat(),
             "last_used": skill.last_used.isoformat(),
-            "confidence_score": skill.confidence_score,
-            "actual_score": skill.actual_score,
-            "decay_score": decay_score,
-            "forecast_7d": forecast_7d,
             "xp": skill.xp,
             "level": skill.level,
-            "streak": skill.streak
+            "streak": skill.streak,
+            # Backward compatibility for frontend
+            "decay_score": metrics['proficiency_score'], 
+            "forecast_7d": metrics['proficiency_score'] # Temp placeholder, engine handles forecast in sub-object
         })
+        
+        output.append(metrics)
         
     return jsonify(output)
 

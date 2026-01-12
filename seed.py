@@ -14,14 +14,14 @@ def seed_data():
         print("Seeding database...")
         
         skills_data = [
-            ("Python Programming", 90, 85, 2, 5),    # Good
-            ("System Design", 75, 70, 30, 0),       # Warning
-            ("Machine Learning", 60, 50, 60, 0),    # Critical
-            ("React.js", 85, 80, 5, 3),             # Good
-            ("Kubernetes", 40, 30, 45, 0)           # Warning
+            ("Python Programming", 90, 85, 2, 5, "high", 0.02),    # Good
+            ("System Design", 75, 70, 30, 0, "medium", 0.08),     # Warning
+            ("Machine Learning", 60, 50, 60, 0, "low", 0.15),     # Critical
+            ("React.js", 85, 80, 5, 3, "medium", 0.04),           # Good
+            ("Kubernetes", 40, 30, 45, 0, "low", 0.12)            # Warning
         ]
 
-        for name, conf, act, days_ago, streak in skills_data:
+        for name, conf, act, days_ago, streak, ctx, err in skills_data:
             last_used = datetime.utcnow() - timedelta(days=days_ago)
             skill = Skill(
                 skill_name=name,
@@ -32,7 +32,11 @@ def seed_data():
                 xp=random.randint(50, 500),
                 level=random.randint(1, 5),
                 streak=streak,
-                last_practice_date=last_used
+                last_practice_date=last_used,
+                # New Engine Fields
+                context_quality=ctx,
+                error_rate=err,
+                avg_task_time_seconds=random.randint(120, 600)
             )
             db.session.add(skill)
             

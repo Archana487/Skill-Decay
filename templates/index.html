@@ -4,540 +4,380 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skill Decay Pro | Advanced Tracker</title>
-    <!-- Modern Typography -->
+    <title>Neural Nexus | Cognitive Decay Tracker</title>
+
+    <!-- Fonts: Orbitron for headers, Rajdhani for technical text -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Inter:wght@300;400;500;600&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Ionicons for Premium Icons -->
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         :root {
-            --bg-deep: #020617;
-            --bg-card: rgba(15, 23, 42, 0.6);
-            --accent-primary: #818cf8;
-            --accent-secondary: #2dd4bf;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --border-glass: rgba(255, 255, 255, 0.08);
-            --border-glow: rgba(129, 140, 248, 0.2);
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --glare: rgba(255, 255, 255, 0.03);
+            /* Neural Nexus Palette */
+            --void-bg: #050508;
+            --glass-panel: rgba(10, 10, 15, 0.65);
+            --neon-cyan: #00f3ff;
+            --neon-magenta: #bc13fe;
+            --neon-green: #0aff0a;
+            --neon-alert: #ff2a2a;
+            --holo-border: rgba(0, 243, 255, 0.3);
+            --text-primary: #e0faff;
+            --text-dim: #5c677d;
+
+            --glow-low: 0 0 10px rgba(0, 243, 255, 0.2);
+            --glow-high: 0 0 20px rgba(188, 19, 254, 0.4);
         }
 
         body {
-            background-color: var(--bg-deep);
-            color: var(--text-main);
-            font-family: 'Inter', sans-serif;
+            background-color: var(--void-bg);
+            color: var(--text-primary);
+            font-family: 'Rajdhani', sans-serif;
             min-height: 100vh;
             overflow-x: hidden;
-            position: relative;
+            letter-spacing: 0.03em;
         }
 
-        /* Moving Mesh Background */
-        body::before {
-            content: "";
+        /* Canvas Background */
+        #neural-canvas {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             z-index: -1;
-            background:
-                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
-                radial-gradient(at 100% 0%, rgba(45, 212, 191, 0.1) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(99, 102, 241, 0.1) 0px, transparent 50%),
-                radial-gradient(at 0% 100%, rgba(45, 212, 191, 0.1) 0px, transparent 50%);
-            animation: meshFlow 20s ease-in-out infinite alternate;
+            opacity: 0.8;
         }
 
-        @keyframes meshFlow {
-            0% {
-                transform: scale(1);
-            }
-
-            100% {
-                transform: scale(1.1);
-            }
-        }
-
-        .glow-orb {
-            position: fixed;
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
-            border-radius: 50%;
-            z-index: -1;
-            filter: blur(60px);
-            pointer-events: none;
-        }
-
-        #orb1 {
-            top: -100px;
-            left: -100px;
-            animation: float 15s infinite;
-        }
-
-        #orb2 {
-            bottom: -100px;
-            right: -100px;
-            animation: float 20s infinite reverse;
-        }
-
-        @keyframes float {
-
-            0%,
-            100% {
-                transform: translate(0, 0);
-            }
-
-            50% {
-                transform: translate(50px, 100px);
-            }
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .fade-in-up {
-            animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            opacity: 0;
-            /* Important: Start invisible */
-        }
-
+        /* Typography */
         h1,
         h2,
         h3,
         h4,
         h5,
-        h6,
-        .outfit {
-            font-family: 'Outfit', sans-serif;
-            letter-spacing: -0.02em;
+        .cyber-font {
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
         }
 
-        .glass {
-            background: var(--bg-card);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--border-glass);
-            border-radius: 24px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        /* Holographic Panels */
+        .holo-glass {
+            background: var(--glass-panel);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--holo-border);
+            border-radius: 4px;
+            /* Techy corners */
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
             position: relative;
             overflow: hidden;
+            transition: all 0.3s ease;
         }
 
-        .glass::after {
-            content: "";
+        .holo-glass::before {
+            content: '';
             position: absolute;
             top: 0;
-            left: -100%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
+            opacity: 0.7;
+        }
+
+        .holo-glass:hover {
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 30px rgba(0, 243, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        /* Glitch Text Effect for Main Title */
+        .glitch-text {
+            position: relative;
+            color: var(--text-primary);
+        }
+
+        /* Stats Badges */
+        .cyber-badge {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.7rem;
+            padding: 4px 12px;
+            border: 1px solid currentColor;
+            background: rgba(0, 0, 0, 0.3);
+            letter-spacing: 0.1em;
+            clip-path: polygon(10% 0, 100% 0, 100% 90%, 90% 100%, 0 100%, 0 10%);
+        }
+
+        .cyber-badge.cyan {
+            color: var(--neon-cyan);
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
+        }
+
+        .cyber-badge.magenta {
+            color: var(--neon-magenta);
+            box-shadow: 0 0 10px rgba(188, 19, 254, 0.2);
+        }
+
+        .cyber-badge.green {
+            color: var(--neon-green);
+            box-shadow: 0 0 10px rgba(10, 255, 10, 0.2);
+        }
+
+        .cyber-badge.red {
+            color: var(--neon-alert);
+            box-shadow: 0 0 10px rgba(255, 42, 42, 0.2);
+        }
+
+        /* Skill Node Cards */
+        .node-card {
+            height: 100%;
+            padding: 1.5rem;
+            position: relative;
+        }
+
+        .node-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 0.8rem;
+        }
+
+        .node-icon {
+            font-size: 2rem;
+            color: var(--neon-cyan);
+            filter: drop-shadow(0 0 5px var(--neon-cyan));
+        }
+
+        .decay-meter-container {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            margin: 1.5rem 0;
+            position: relative;
+        }
+
+        .decay-meter-fill {
+            height: 100%;
+            background: var(--neon-cyan);
+            box-shadow: 0 0 15px var(--neon-cyan);
+            width: 0%;
+            transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        /* Buttons */
+        .btn-cyber {
+            background: transparent;
+            border: 1px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            padding: 0.8rem 2rem;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
+        }
+
+        .btn-cyber::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, var(--glare), transparent);
-            transition: 0.5s;
+            background: var(--neon-cyan);
+            z-index: -1;
+            transform: translateX(-100%);
+            transition: transform 0.3s;
         }
 
-        .glass:hover::after {
-            left: 100%;
+        .btn-cyber:hover {
+            color: #000;
+            box-shadow: 0 0 20px var(--neon-cyan);
         }
 
-        .glass-hover {
-            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        .btn-cyber:hover::before {
+            transform: translateX(0);
         }
 
-        .glass-hover:hover {
-            transform: translateY(-10px) scale(1.02);
-            border-color: var(--border-glow);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(129, 140, 248, 0.1);
-            background: rgba(30, 41, 59, 0.8);
-        }
-
-        .page-header {
-            padding: 4rem 0 2rem 0;
-        }
-
-        .stat-badge {
-            font-size: 0.75rem;
-            font-weight: 700;
-            padding: 6px 14px;
-            border-radius: 30px;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .stat-badge.good {
-            background: rgba(16, 185, 129, 0.1);
-            color: #34d399;
-            border: 1px solid rgba(16, 185, 129, 0.2);
-        }
-
-        .stat-badge.warn {
-            background: rgba(245, 158, 11, 0.1);
-            color: #fbbf24;
-            border: 1px solid rgba(245, 158, 11, 0.2);
-        }
-
-        .stat-badge.crit {
-            background: rgba(239, 68, 68, 0.1);
-            color: #f87171;
-            border: 1px solid rgba(239, 68, 68, 0.2);
-        }
-
-        .skill-card {
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            padding: 2rem;
-        }
-
-        .skill-icon {
-            width: 48px;
-            height: 48px;
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 8px 16px rgba(99, 102, 241, 0.3);
-            color: white;
-        }
-
-        .decay-progress {
-            height: 10px;
+        .btn-icon-cyber {
             background: rgba(255, 255, 255, 0.05);
-            border-radius: 5px;
-            margin: 1.5rem 0;
-            overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .decay-fill {
-            height: 100%;
-            transition: width 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-            box-shadow: 0 0 15px currentColor;
-        }
-
-        .intervention-box {
-            margin-top: auto;
-            background: rgba(239, 68, 68, 0.05);
-            border: 1px solid rgba(239, 68, 68, 0.2);
-            border-radius: 16px;
-            padding: 16px;
-            font-size: 0.9rem;
-            animation: slideIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-        }
-
-        .btn-premium {
-            background: linear-gradient(135deg, var(--accent-primary), #6366f1);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            padding: 0.75rem 2rem;
-            font-weight: 700;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 10px 20px -10px rgba(99, 102, 241, 0.5);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            font-size: 0.85rem;
-        }
-
-        .btn-premium:hover {
-            opacity: 1;
-            transform: translateY(-2px);
-            box-shadow: 0 15px 30px -10px rgba(99, 102, 241, 0.6);
-            color: white;
-        }
-
-        .btn-action-small {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border-glass);
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            border-radius: 10px;
-            width: 36px;
-            height: 36px;
+            border: 1px solid var(--text-dim);
+            color: var(--text-dim);
+            width: 40px;
+            height: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s;
-        }
-
-        .btn-action-small:hover {
-            color: white;
-            background: rgba(255, 255, 255, 0.1);
-            border-color: var(--accent-secondary);
-            transform: scale(1.1);
-        }
-
-        .history-item {
-            padding: 1.25rem;
-            border-left: 3px solid var(--accent-primary);
-            margin-bottom: 1.25rem;
-            background: rgba(255, 255, 255, 0.02);
-            border-radius: 0 16px 16px 0;
             transition: all 0.3s;
+            clip-path: polygon(30% 0, 100% 0, 100% 70%, 70% 100%, 0 100%, 0 30%);
         }
 
-        .history-item:hover {
-            background: rgba(255, 255, 255, 0.05);
-            transform: translateX(5px);
+        .btn-icon-cyber:hover {
+            border-color: var(--neon-magenta);
+            color: var(--neon-magenta);
+            box-shadow: 0 0 15px var(--neon-magenta);
         }
 
-        /* Toast Notifications */
-        .toast-container {
+        /* Scanlines Overlay */
+        .scanlines {
             position: fixed;
-            top: 2rem;
-            right: 2rem;
-            z-index: 10000;
-        }
-
-        .custom-toast {
-            background: rgba(15, 23, 42, 0.9);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--border-glass);
-            color: white;
-            padding: 1rem 1.5rem;
-            border-radius: 12px;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            animation: slideIn 0.4s ease-out;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateX(100%);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        @keyframes slideOut {
-            from {
-                opacity: 1;
-                transform: translateX(0);
-            }
-
-            to {
-                opacity: 0;
-                transform: translateX(100%);
-            }
-        }
-
-        /* Chart Tweaks */
-        #mainHealthChart {
-            filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.2));
-        }
-
-        /* Gamification Styles */
-        .xp-container {
-            height: 6px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 3px;
-            overflow: hidden;
-            margin-top: 4px;
-        }
-
-        .xp-bar {
+            top: 0;
+            left: 0;
+            width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, var(--accent-secondary), #4ade80);
-            transition: width 1s ease-out;
-        }
-
-        .streak-badge {
-            background: linear-gradient(135deg, #f59e0b, #ef4444);
-            color: white;
-            padding: 2px 8px;
-            border-radius: 20px;
-            font-size: 0.65rem;
-            font-weight: 800;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            box-shadow: 0 4px 10px rgba(239, 68, 68, 0.2);
-        }
-
-        .forecast-pill {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border-glass);
-            padding: 4px 10px;
-            border-radius: 8px;
-            font-size: 0.7rem;
-            color: var(--text-muted);
-        }
-
-        .intervention-item {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border-glass);
-            border-radius: 12px;
-            padding: 10px;
-            margin-bottom: 8px;
-            transition: all 0.2s;
-            cursor: pointer;
-        }
-
-        .intervention-item:hover {
-            background: rgba(255, 255, 255, 0.06);
-            border-color: var(--accent-primary);
-            transform: scale(1.02);
-        }
-
-        .tier-tag {
-            font-size: 0.6rem;
-            text-transform: uppercase;
-            font-weight: 800;
-            padding: 2px 6px;
-            border-radius: 4px;
-            margin-bottom: 4px;
-            display: inline-block;
-        }
-
-        .tier-micro {
-            background: rgba(45, 212, 191, 0.1);
-            color: #2dd4bf;
-        }
-
-        .tier-maintenance {
-            background: rgba(99, 102, 241, 0.1);
-            color: #818cf8;
-        }
-
-        .tier-deep {
-            background: rgba(239, 68, 68, 0.1);
-            color: #f87171;
-        }
-
-        .chart-wrap {
-            position: relative;
-            height: 200px;
-            width: 200px;
-        }
-
-        .chart-center-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0) 50%, rgba(0, 0, 0, 0.1) 50%, rgba(0, 0, 0, 0.1));
+            background-size: 100% 4px;
             pointer-events: none;
+            z-index: 999;
+            opacity: 0.3;
+        }
+
+        /* Modals */
+        .modal-content {
+            background-color: #0a0a0f;
+            border: 1px solid var(--neon-cyan);
+            box-shadow: 0 0 50px rgba(0, 243, 255, 0.1);
+        }
+
+        .form-control,
+        .form-select {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--text-dim);
+            color: var(--text-primary);
+            border-radius: 0;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            background: rgba(0, 243, 255, 0.05);
+            border-color: var(--neon-cyan);
+            color: var(--text-primary);
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
+        }
+
+        /* Loading */
+        .loader-ring {
+            width: 64px;
+            height: 64px;
+            border: 4px solid transparent;
+            border-top: 4px solid var(--neon-cyan);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="glow-orb" id="orb1"></div>
-    <div class="glow-orb" id="orb2"></div>
-    <div class="toast-container" id="toastContainer"></div>
+    <canvas id="neural-canvas"></canvas>
+    <div class="scanlines"></div>
+    <div class="toast-container position-fixed top-0 end-0 p-3" id="toastContainer" style="z-index: 2000"></div>
 
-    <div class="container pb-5">
-        <header class="page-header row align-items-center">
+    <div class="container py-5">
+        <!-- Header -->
+        <header class="row align-items-end mb-5 border-bottom border-dark pb-4"
+            style="border-color: rgba(255,255,255,0.1) !important;">
             <div class="col-lg-8">
                 <div class="d-flex align-items-center gap-3 mb-2">
-                    <span class="stat-badge good"
-                        style="background: rgba(99, 102, 241, 0.1); color: var(--accent-primary); border-color: rgba(99, 102, 241, 0.2);">System
-                        Active</span>
-                    <span class="text-muted small outfit fw-bold" style="letter-spacing: 2px;">V2.0 PRO ENGINE</span>
+                    <span class="cyber-badge green">SYSTEM_ONLINE</span>
+                    <span class="cyber-badge cyan">NET_V2.4</span>
                 </div>
-                <h1 class="display-4 fw-bold mt-1">Skill Decay <span
-                        style="background: linear-gradient(to right, var(--accent-primary), var(--accent-secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Pro</span>
+                <h1 class="display-3 fw-bold mb-0 glitch-text"
+                    style="color:white; text-shadow: 0 0 20px rgba(0,255,255,0.5);">
+                    NEURAL<span style="color: var(--neon-magenta)">NEXUS</span>
                 </h1>
-                <p class="text-muted lead">Advanced retention analytics and capability drift monitoring.</p>
+                <p class="text-dim mt-2" style="font-family: 'Rajdhani'; font-size: 1.2rem; letter-spacing: 2px;">
+                    COGNITIVE DECAY INTELLIGENCE INTERFACE
+                </p>
             </div>
             <div class="col-lg-4 text-lg-end">
-                <button class="btn btn-premium" data-bs-toggle="modal" data-bs-target="#addSkillModal">
-                    <ion-icon name="analytics-outline" class="me-2"
-                        style="font-size: 1.2rem; vertical-align: middle;"></ion-icon>New Capability Analysis
+                <button class="btn-cyber" data-bs-toggle="modal" data-bs-target="#addSkillModal">
+                    <ion-icon name="add-circle-outline" class="me-2"></ion-icon>INIT_NEW_NODE
                 </button>
             </div>
         </header>
 
+        <!-- Main Dashboard -->
         <div class="row g-4 mb-5">
-            <div class="col-xl-3 col-md-6">
-                <div class="glass p-4 h-100 glass-hover">
-                    <div class="text-muted small fw-bold mb-2">NETWORK AVG RETENTION</div>
-                    <div class="h1 mb-1 outfit fw-bold" id="avgRetention">--%</div>
-                    <div id="retentionStatus" class="mt-2"></div>
-                    <div class="mt-4 pt-3 border-top border-glass small text-muted">
-                        <ion-icon name="trending-up-outline" class="me-1"></ion-icon> Trend: Stable
+            <!-- Stats Column -->
+            <div class="col-lg-3">
+                <div class="holo-glass p-4 mb-4 text-center">
+                    <div class="text-dim cyber-font small mb-2">NETWORK SUSTAINABILITY</div>
+                    <div class="display-4 fw-bold"
+                        style="color: var(--neon-cyan); text-shadow: 0 0 20px var(--neon-cyan);" id="avgRetention">--%
                     </div>
+                    <div id="retentionStatus" class="mt-2 text-uppercase small">CALCULATING...</div>
+                </div>
+
+                <div class="holo-glass p-4 text-center">
+                    <div class="text-dim cyber-font small mb-2">ACTIVE NODES</div>
+                    <div class="display-4 fw-bold text-white" id="totalSkills">0</div>
                 </div>
             </div>
-            <div class="col-xl-3 col-md-6">
-                <div class="glass p-4 h-100 glass-hover">
-                    <div class="text-muted small fw-bold mb-2">ACTIVE CAPABILITIES</div>
-                    <div class="h1 mb-1 outfit fw-bold" id="totalSkills">0</div>
-                    <span class="text-muted small d-block mb-4">Tracking live data...</span>
-                    <div class="mt-auto pt-3 border-top border-glass small text-muted">
-                        <ion-icon name="server-outline" class="me-1"></ion-icon> DB Status: Connected
+
+            <!-- Chart Column -->
+            <div class="col-lg-9">
+                <div class="holo-glass p-4 h-100 d-flex align-items-center justify-content-between">
+                    <div class="w-100" style="max-width: 300px;">
+                        <h4 class="cyber-font mb-4 text-white">SYSTEM INTEGRITY</h4>
+                        <div class="d-flex flex-column gap-3" id="healthLegend">
+                            <!-- JS populated -->
+                        </div>
                     </div>
-                </div>
-            </div>
-            <div class="col-xl-6">
-                <div class="glass p-4 d-flex align-items-center justify-content-between h-100 glass-hover">
-                    <div class="flex-grow-1">
-                        <div class="text-muted small fw-bold mb-3">HEALTH DISTRIBUTION MAP</div>
-                        <div class="d-flex flex-column gap-3" id="healthLegend"></div>
-                    </div>
-                    <div class="chart-wrap">
+                    <div style="height: 250px; width: 250px; position: relative;">
                         <canvas id="mainHealthChart"></canvas>
-                        <div class="chart-center-text">
-                            <div class="text-muted"
-                                style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase;">System Health
+                        <div class="position-absolute top-50 start-50 translate-middle text-center">
+                            <div style="font-size: 0.6rem; color: var(--text-dim);" class="cyber-font">STATUS</div>
+                            <div class="h3 mb-0 cyber-font" id="overallStatusText" style="color: var(--neon-cyan)">--
                             </div>
-                            <div class="h4 fw-bold outfit mb-0" id="overallStatusText">--</div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="row g-5">
-            <div class="col-lg-8">
-                <h4 class="outfit mb-4 d-flex align-items-center fw-bold">
-                    <ion-icon name="grid-outline" class="me-2"
-                        style="color: var(--accent-primary)"></ion-icon>Capability Analysis Matrix
+        <!-- Skills Matrix -->
+        <div class="row g-4">
+            <div class="col-12 mb-2">
+                <h4 class="cyber-font d-flex align-items-center"
+                    style="color: var(--text-primary); border-left: 4px solid var(--neon-magenta); padding-left: 1rem;">
+                    ACTIVE_NEURAL_PATHWAYS
                 </h4>
-                <div class="row g-4" id="skillsContainer">
-                    <div class="col-12 text-center py-5">
-                        <div class="spinner-border text-info"></div>
-                    </div>
+            </div>
+
+            <div id="skillsContainer" class="row g-4">
+                <div class="col-12 text-center py-5">
+                    <div class="loader-ring mx-auto"></div>
+                    <p class="mt-3 text-dim cyber-font">INITIALIZING_DATA_STREAM...</p>
                 </div>
             </div>
-            <div class="col-lg-4">
-                <h4 class="outfit mb-4 d-flex align-items-center">
-                    <ion-icon name="time-outline" class="me-2"></ion-icon>Activity Log
-                </h4>
-                <div class="glass p-4" id="historyContainer">
-                    <p class="text-muted small">No recent activity detected.</p>
-                </div>
+        </div>
+
+        <!-- Activity Log (Simplified for cleaner look) -->
+        <div class="mt-5 pt-4 border-top" style="border-color: rgba(255,255,255,0.05) !important;">
+            <h5 class="cyber-font text-dim mb-4">SYSTEM_LOGS</h5>
+            <div id="historyContainer" class="row g-3"
+                style="max-height: 200px; overflow-y: auto; scrollbar-width: thin;">
             </div>
         </div>
     </div>
@@ -545,27 +385,33 @@
     <!-- Modals -->
     <div class="modal fade" id="addSkillModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content glass">
-                <div class="modal-header border-0 pb-0">
-                    <h5 class="modal-title outfit fw-bold">Add New Capability</h5><button type="button"
-                        class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            <div class="modal-content">
+                <div class="modal-header border-bottom border-secondary">
+                    <h5 class="modal-title cyber-font text-white">>> INIT_NEW_NODE</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <form id="addSkillForm">
                     <div class="modal-body">
-                        <div class="mb-4"><label class="form-label small text-muted">Skill Identifier</label><input
-                                type="text" id="skillName" class="form-control" placeholder="e.g. Distributed Systems"
-                                required></div>
+                        <div class="mb-4">
+                            <label class="form-label text-dim small cyber-font">IDENTIFIER</label>
+                            <input type="text" id="skillName" class="form-control" placeholder="e.g. QUANTUM_MECHANICS"
+                                required>
+                        </div>
                         <div class="row g-3">
-                            <div class="col-6"><label class="form-label small text-muted">Self-Confidence
-                                    (0-100)</label><input type="number" id="confidenceScore" class="form-control"
-                                    min="0" max="100" value="80"></div>
-                            <div class="col-6"><label class="form-label small text-muted">Actual Perf.
-                                    (0-100)</label><input type="number" id="actualScore" class="form-control" min="0"
-                                    max="100" value="75"></div>
+                            <div class="col-6">
+                                <label class="form-label text-dim small cyber-font">CONFIDENCE_INDEX</label>
+                                <input type="number" id="confidenceScore" class="form-control" min="0" max="100"
+                                    value="80">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label text-dim small cyber-font">PERFORMANCE_METRIC</label>
+                                <input type="number" id="actualScore" class="form-control" min="0" max="100" value="75">
+                            </div>
                         </div>
                     </div>
-                    <div class="modal-footer border-0"><button type="submit" class="btn btn-premium w-100">Launch
-                            Analysis</button></div>
+                    <div class="modal-footer border-top border-secondary">
+                        <button type="submit" class="btn-cyber w-100">EXECUTE</button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -573,52 +419,128 @@
 
     <div class="modal fade" id="practiceModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content glass">
-                <div class="modal-header border-0 pb-0">
-                    <h5 class="modal-title outfit fw-bold">Log Practice Session</h5><button type="button"
-                        class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            <div class="modal-content">
+                <div class="modal-header border-bottom border-secondary">
+                    <h5 class="modal-title cyber-font text-white">>> PROTOCOL_REINFORCEMENT</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-                <form id="practiceForm"><input type="hidden" id="practiceSkillId">
+                <form id="practiceForm">
+                    <input type="hidden" id="practiceSkillId">
                     <div class="modal-body">
-                        <div class="mb-4"><label class="form-label small text-muted">Activity Type</label><select
-                                id="activityType" class="form-select">
-                                <option value="Project Implementation">Project Implementation</option>
-                                <option value="Tutorial / Reading">Tutorial / Reading</option>
-                                <option value="Quiz / Assessment">Quiz / Assessment</option>
-                                <option value="Mentoring Others">Mentoring Others</option>
-                            </select></div>
-                        <div class="mb-2"><label class="form-label small text-muted">Reflective Notes</label><textarea
-                                id="practiceNotes" class="form-control" rows="3"
-                                placeholder="What did you work on?"></textarea></div>
+                        <div class="mb-4">
+                            <label class="form-label text-dim small cyber-font">ACTIVITY_VECTOR</label>
+                            <select id="activityType" class="form-select">
+                                <option value="Project Implementation">PRACTICAL_APPLICATION</option>
+                                <option value="Tutorial / Reading">DATA_INGESTION</option>
+                                <option value="Quiz / Assessment">PERFORMANCE_CHECK</option>
+                                <option value="Mentoring Others">KNOWLEDGE_TRANSFER</option>
+                            </select>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label text-dim small cyber-font">SESSION_LOG</label>
+                            <textarea id="practiceNotes" class="form-control" rows="3"
+                                placeholder="Input session details..."></textarea>
+                        </div>
                     </div>
-                    <div class="modal-footer border-0"><button type="submit" class="btn btn-premium w-100">Update
-                            Retention</button></div>
+                    <div class="modal-footer border-top border-secondary">
+                        <button type="submit" class="btn-cyber w-100">UPDATE_MATRICES</button>
+                    </div>
                 </form>
             </div>
         </div>
     </div>
 
+    <!-- Logic -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // --- Neural Background Animation ---
+        const canvas = document.getElementById('neural-canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let particles = [];
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.size = Math.random() * 2 + 1;
+                this.color = Math.random() > 0.5 ? '#00f3ff' : '#bc13fe';
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                if (this.x < 0 || this.x > width) this.vx *= -1;
+                if (this.y < 0 || this.y > height) this.vy *= -1;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < 60; i++) particles.push(new Particle());
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+
+            // Draw connections
+            particles.forEach((p, i) => {
+                p.update();
+                p.draw();
+
+                // Connect near particles
+                for (let j = i + 1; j < particles.length; j++) {
+                    const p2 = particles[j];
+                    const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+                    if (dist < 150) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(100, 100, 255, ${0.15 - dist / 1000})`;
+                        ctx.lineWidth = 1;
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.stroke();
+                    }
+                }
+            });
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // --- Logic Integration ---
         let healthChart = null;
 
-        function showToast(message, type = 'info') {
+        document.addEventListener('DOMContentLoaded', fetchAll);
+
+        // Toast System
+        function showToast(msg, type = 'info') {
             const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = 'custom-toast';
-            const icon = type === 'success' ? 'checkmark-circle' : type === 'error' ? 'alert-circle' : 'information-circle';
-            const color = type === 'success' ? 'var(--success)' : type === 'error' ? 'var(--danger)' : 'var(--accent-primary)';
+            const el = document.createElement('div');
+            el.className = 'toast show align-items-center text-white border-0';
+            el.style.backgroundColor = type === 'success' ? 'rgba(10, 255, 10, 0.2)' : 'rgba(0, 243, 255, 0.2)';
+            el.style.backdropFilter = 'blur(10px)';
+            el.style.border = `1px solid ${type === 'success' ? 'var(--neon-green)' : 'var(--neon-cyan)'}`;
 
-            toast.innerHTML = `
-                <ion-icon name="${icon}" style="color: ${color}; font-size: 1.5rem"></ion-icon>
-                <span>${message}</span>
+            el.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body cyber-font small">
+                        ${type === 'success' ? '[SUCCESS]' : '[INFO]'} ${msg}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
             `;
-            container.appendChild(toast);
-
-            setTimeout(() => {
-                toast.style.animation = 'slideOut 0.4s ease-in forwards';
-                setTimeout(() => toast.remove(), 400);
-            }, 3000);
+            container.appendChild(el);
+            setTimeout(() => el.remove(), 4000);
         }
 
         async function fetchAll() {
@@ -634,232 +556,178 @@
                 renderHistory(history);
             } catch (e) {
                 console.error(e);
-                showToast('Failed to sync with engine', 'error');
+                showToast('CONNECTION_LOST: RETRYING...', 'error');
             }
         }
 
         function updateStats(skills) {
             document.getElementById('totalSkills').textContent = skills.length;
             if (skills.length > 0) {
-                const avgRetention = Math.round(100 - (skills.reduce((acc, s) => acc + s.decay_score, 0) / skills.length));
-                document.getElementById('avgRetention').textContent = avgRetention + '%';
+                const avg = Math.round(skills.reduce((a, b) => a + b.proficiency_score, 0) / skills.length);
+                document.getElementById('avgRetention').textContent = avg + '%';
+
                 const statusEl = document.getElementById('retentionStatus');
-                if (avgRetention > 80) statusEl.innerHTML = '<span class="stat-badge good">Optimal Health</span>';
-                else if (avgRetention > 50) statusEl.innerHTML = '<span class="stat-badge warn">Attention Needed</span>';
-                else statusEl.innerHTML = '<span class="stat-badge crit">Critical Degradation</span>';
-                document.getElementById('overallStatusText').textContent = avgRetention > 70 ? 'STABLE' : 'RISK';
-                document.getElementById('overallStatusText').style.color = avgRetention > 70 ? 'var(--accent-secondary)' : 'var(--danger)';
+                statusEl.innerHTML = avg > 80 ? '<span class="text-success">OPTIMAL_FLOW</span>' : '<span class="text-warning">SIGNAL_DEGRADATION</span>';
+
+                document.getElementById('overallStatusText').textContent = avg > 70 ? 'STABLE' : 'RISK';
             }
         }
 
         function renderSkills(skills, interventions) {
             const container = document.getElementById('skillsContainer');
-            container.innerHTML = skills.length ? '' : `
-                <div class="col-12 text-center py-5">
-                    <div class="glass p-5">
-                        <ion-icon name="layers-outline" style="font-size: 4rem; color: var(--text-muted); opacity: 0.3"></ion-icon>
-                        <h5 class="mt-4 text-muted outfit">No Capability Data Detected</h5>
-                        <p class="text-muted small">Initialize your first capability analysis to begin monitoring.</p>
-                    </div>
-                </div>`;
+            container.innerHTML = '';
 
-            skills.forEach((skill, index) => {
-                const intervention = interventions.find(i => i.skill_name === skill.skill_name);
-                const scoreColor = skill.decay_score > 60 ? 'var(--danger)' : skill.decay_score > 30 ? 'var(--warning)' : 'var(--success)';
-                const xpPercent = skill.xp % 100;
+            if (skills.length === 0) {
+                container.innerHTML = `<div class="text-center text-dim cyber-font py-5">NO_DATA_NODES_FOUND</div>`;
+                return;
+            }
 
-                container.insertAdjacentHTML('beforeend', `
-                    <div class="col-md-6 fade-in-up" style="animation-delay: ${index * 0.1}s">
-                    <div class="glass skill-card glass-hover">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <div class="skill-icon"><ion-icon name="rocket-outline"></ion-icon></div>
-                            <div class="d-flex gap-2 align-items-center">
-                                ${skill.streak > 0 ? `<div class="streak-badge"><ion-icon name="flame"></ion-icon>${skill.streak}d</div>` : ''}
-                                <button class="btn btn-action-small" onclick="openPracticeModal(${skill.id})" title="Log Practice">
-                                    <ion-icon name="flash-outline"></ion-icon>
+            skills.forEach((skill, i) => {
+                const zone = skill.stability_zone || 'stable';
+                let colorVar = 'var(--neon-green)';
+                if (zone === 'drift') colorVar = 'var(--neon-cyan)'; // Using Cyan for drift/warn in this theme usually
+                if (zone === 'critical') colorVar = 'var(--neon-alert)';
+
+                const html = `
+                <div class="col-xl-4 col-md-6">
+                    <div class="holo-glass node-card p-4">
+                        <div class="node-header">
+                            <div>
+                                <h4 class="mb-1 text-white" style="font-size: 1.1rem">${skill.skill_name}</h4>
+                                <div class="cyber-badge" style="color: ${colorVar}; border-color: ${colorVar}">${zone.toUpperCase()}</div>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button class="btn-icon-cyber" onclick="openPracticeModal(${skill.id})" title="REINFORCE">
+                                    <ion-icon name="flash"></ion-icon>
                                 </button>
-                                <button class="btn btn-action-small" onclick="simulateDecay(${skill.id})" title="Simulate 30 Day Drift">
-                                    <ion-icon name="time-outline"></ion-icon>
+                                <button class="btn-icon-cyber" onclick="simulateDecay(${skill.id})" title="ACCELERATE_DECAY">
+                                    <ion-icon name="hourglass"></ion-icon>
                                 </button>
                             </div>
                         </div>
 
-                        <div class="d-flex justify-content-between align-items-end mb-1">
-                            <h4 class="outfit fw-bold mb-0">${skill.skill_name}</h4>
-                            <div class="text-muted small fw-bold">LVL ${skill.level}</div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <small class="text-dim cyber-font" style="font-size: 0.6rem">SKILL_DEBT</small>
+                                <div class="h5 mb-0 text-white">${skill.skill_debt}</div>
+                            </div>
+                            <div class="col-6">
+                                <small class="text-dim cyber-font" style="font-size: 0.6rem">FAIL_PROB</small>
+                                <div class="h5 mb-0" style="color: ${skill.failure_probability > 0.5 ? 'var(--neon-alert)' : 'var(--text-primary)'}">
+                                    ${(skill.failure_probability * 100).toFixed(0)}%
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="xp-container mb-3">
-                            <div class="xp-bar" style="width: ${xpPercent}%"></div>
+                        <div class="d-flex justify-content-between text-dim small mb-1 cyber-font">
+                            <span>SIGNAL_STRENGTH</span>
+                            <span style="color: ${colorVar}">${skill.proficiency_score}%</span>
+                        </div>
+                        <div class="progress" style="height: 4px; background: rgba(255,255,255,0.1);">
+                            <div class="progress-bar" style="width: ${skill.proficiency_score}%; background: ${colorVar}; box-shadow: 0 0 10px ${colorVar}"></div>
                         </div>
 
-                        <span class="text-muted small d-block mb-3">
-                            <ion-icon name="calendar-clear-outline" class="me-1"></ion-icon> Last Refined: ${new Date(skill.last_used).toLocaleDateString()}
-                        </span>
-
-                        <div class="d-flex justify-content-between align-items-center mb-2 mt-3">
-                            <div class="uppercase fw-bold text-muted" style="font-size: 0.65rem">Retention Drift</div>
-                            <div class="forecast-pill">7D FORECAST: ${Math.round(skill.forecast_7d)}%</div>
+                        <div class="mt-3 pt-3 border-top border-secondary" style="border-color: rgba(255,255,255,0.1) !important">
+                             <div class="text-dim small cyber-font mb-1">> INTELLIGENCE_SUGGESTION</div>
+                             <div class="text-white small" style="font-style: italic; opacity: 0.8">
+                                "${skill.explainability.corrective_action}"
+                             </div>
                         </div>
-
-                        <div class="d-flex justify-content-between small mb-1 fw-bold">
-                            <span class="text-muted">Current</span>
-                            <span style="color: ${scoreColor}">${Math.round(skill.decay_score)}%</span>
-                        </div>
-                        <div class="decay-progress mb-3">
-                            <div class="decay-fill" style="width: ${skill.decay_score}%; background: ${scoreColor}; color: ${scoreColor}"></div>
-                        </div>
-
-                        ${intervention && intervention.suggestion.length ? `
-                                <div class="intervention-box">
-                                    <div class="text-muted fw-bold small mb-2 d-flex align-items-center" style="letter-spacing: 1px">
-                                        <ion-icon name="construct-outline" class="me-1" style="color: var(--accent-primary)"></ion-icon> PATHWAY OPTIONS
-                                    </div>
-                                    <div class="intervention-list">
-                                        ${intervention.suggestion.map(s => `
-                                            <div class="intervention-item">
-                                                <div class="tier-tag tier-${s.tier.toLowerCase().replace(' ', '-')}">${s.tier}</div>
-                                                <div class="small text-main lh-sm mb-1">${s.task}</div>
-                                                <div class="d-flex justify-content-between align-items-center mt-1">
-                                                    <span class="text-muted" style="font-size: 0.65rem"><ion-icon name="time-outline"></ion-icon> ${s.time}</span>
-                                                    <span class="text-success fw-bold" style="font-size: 0.65rem">+${s.xp} XP</span>
-                                                </div>
-                                            </div>
-                                        `).join('')}
-                                    </div>
-                                </div>` : ''}
                     </div>
-                    </div > `);
+                </div>
+                `;
+                container.insertAdjacentHTML('beforeend', html);
             });
         }
 
         function renderHistory(history) {
             const container = document.getElementById('historyContainer');
-            container.innerHTML = history.length ? '' : `
-                    < div class= "text-center py-4" >
-                    <ion-icon name="clipboard-outline" style="font-size: 2rem; color: var(--text-muted); opacity: 0.2"></ion-icon>
-                    <p class="text-muted small mt-2">Buffer Empty</p>
-                </div > `;
-
-            history.forEach(log => {
-                container.insertAdjacentHTML('beforeend', `
-                    <div class="history-item">
-                        <div class="d-flex justify-content-between align-items-start mb-1">
-                            <strong class="outfit small d-block fw-bold">${log.skill_name}</strong>
-                            <span class="text-muted" style="font-size: 0.65rem">${new Date(log.date).toLocaleDateString()}</span>
+            container.innerHTML = history.slice(0, 8).map(log => `
+                <div class="col-md-6 col-lg-3">
+                    <div class="p-2 border border-secondary" style="border-color: rgba(255,255,255,0.1) !important; background: rgba(0,0,0,0.2)">
+                        <div class="d-flex justify-content-between">
+                            <span class="text-white small cyber-font">${log.skill_name}</span>
+                            <span class="text-dim small" style="font-size: 0.7rem">${new Date(log.date).toLocaleDateString()}</span>
                         </div>
-                        <div class="small fw-bold" style="color: var(--accent-secondary); font-size: 0.7rem">${log.activity_type.toUpperCase()}</div>
-                        ${log.notes ? `<div class="text-muted mt-2 lh-sm" style="font-size: 0.75rem; font-style: italic">"${log.notes}"</div>` : ''}
-                    </div > `);
-            });
+                        <div class="text-info small" style="font-size: 0.75rem">${log.activity_type}</div>
+                    </div>
+                </div>
+            `).join('');
         }
 
         function updateChart(skills) {
-            const counts = [
-                skills.filter(s => s.decay_score < 30).length,
-                skills.filter(s => s.decay_score >= 30 && s.decay_score <= 60).length,
-                skills.filter(s => s.decay_score > 60).length
-            ];
             const ctx = document.getElementById('mainHealthChart').getContext('2d');
             if (healthChart) healthChart.destroy();
+
+            const data = [
+                skills.filter(s => s.stability_zone === 'stable').length,
+                skills.filter(s => s.stability_zone === 'drift').length,
+                skills.filter(s => s.stability_zone === 'critical').length
+            ];
+
             healthChart = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
                     datasets: [{
-                        data: counts,
-                        backgroundColor: ['#10b981', '#f59e0b', '#ef4444'],
+                        data: data,
+                        backgroundColor: ['#0aff0a', '#00f3ff', '#ff2a2a'],
                         borderWidth: 0,
-                        hoverOffset: 12,
-                        borderRadius: 5
                     }]
                 },
                 options: {
-                    cutout: '82%',
+                    cutout: '85%',
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    animation: { animateRotate: true, duration: 2000 }
+                    plugins: { legend: { display: false } }
                 }
             });
-
-            document.getElementById('healthLegend').innerHTML = `
-                <div class="d-flex align-items-center justify-content-between">
-                    <div class="small d-flex align-items-center"><span style="color:#10b981; font-size: 1.2rem; line-height: 1;" class="me-2">●</span> Stable Zone</div>
-                    <div class="fw-bold outfit">${counts[0]}</div>
-                </div>
-                <div class="d-flex align-items-center justify-content-between">
-                    <div class="small d-flex align-items-center"><span style="color:#f59e0b; font-size: 1.2rem; line-height: 1;" class="me-2">●</span> Drift Warning</div>
-                    <div class="fw-bold outfit">${counts[1]}</div>
-                </div>
-                <div class="d-flex align-items-center justify-content-between">
-                    <div class="small d-flex align-items-center"><span style="color:#ef4444; font-size: 1.2rem; line-height: 1;" class="me-2">●</span> Critical Risk</div>
-                    <div class="fw-bold outfit">${counts[2]}</div>
-                </div>
-            `;
         }
 
-        function openPracticeModal(id) {
+        // --- Interaction Handlers ---
+        document.getElementById('addSkillForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const data = {
+                skill_name: document.getElementById('skillName').value,
+                confidence_score: document.getElementById('confidenceScore').value,
+                actual_score: document.getElementById('actualScore').value
+            };
+            await fetch('/add-skill', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            bootstrap.Modal.getInstance(document.getElementById('addSkillModal')).hide();
+            showToast('NODE_INITIALIZED', 'success');
+            fetchAll();
+        };
+
+        window.openPracticeModal = (id) => {
             document.getElementById('practiceSkillId').value = id;
             new bootstrap.Modal(document.getElementById('practiceModal')).show();
-        }
+        };
 
-        async function simulateDecay(id) {
-            try {
-                await fetch(`/simulate-decay/${id}`, { method: 'POST' });
-                showToast('Drift simulation successful', 'info');
-                fetchAll();
-            } catch (e) { showToast('Engine error', 'error'); }
-        }
-
-        document.getElementById('addSkillForm').addEventListener('submit', async (e) => {
+        document.getElementById('practiceForm').onsubmit = async (e) => {
             e.preventDefault();
-            const payload = {
-                skill_name: document.getElementById('skillName').value,
-                confidence_score: parseInt(document.getElementById('confidenceScore').value || 80),
-                actual_score: parseInt(document.getElementById('actualScore').value || 75)
-            };
-            try {
-                const r = await fetch('/add-skill', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                if (r.ok) {
-                    showToast('Capability added to matrix', 'success');
-                    bootstrap.Modal.getInstance(document.getElementById('addSkillModal')).hide();
-                    e.target.reset();
-                    fetchAll();
-                }
-            } catch (e) { showToast('Transmission failed', 'error'); }
-        });
-
-        document.getElementById('practiceForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const payload = {
-                skill_id: parseInt(document.getElementById('practiceSkillId').value),
+            const data = {
+                skill_id: document.getElementById('practiceSkillId').value,
                 activity_type: document.getElementById('activityType').value,
                 notes: document.getElementById('practiceNotes').value
             };
-            try {
-                const r = await fetch('/practice', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                const result = await r.json();
-                if (r.ok) {
-                    showToast(`Retention sync complete! + ${result.xp_gain} XP`, 'success');
-                    if (result.level_up) {
-                        setTimeout(() => showToast(`LEVEL UP! Now Level ${result.new_level} 🚀`, 'success'), 500);
-                    }
-                    bootstrap.Modal.getInstance(document.getElementById('practiceModal')).hide();
-                    e.target.reset();
-                    fetchAll();
-                }
-            } catch (e) { showToast('Sync failed', 'error'); }
-        });
+            await fetch('/practice', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            bootstrap.Modal.getInstance(document.getElementById('practiceModal')).hide();
+            showToast('MATRICES_UPDATED', 'success');
+            fetchAll();
+        };
 
-        fetchAll();
+        window.simulateDecay = async (id) => {
+            await fetch(`/simulate-decay/${id}`, { method: 'POST' });
+            showToast('TEMPORAL_SHIFT_COMPLETE', 'info');
+            fetchAll();
+        };
     </script>
 </body>
 

@@ -312,7 +312,7 @@
             </div>
             <div class="col-lg-4 text-lg-end">
                 <button class="btn-cyber" data-bs-toggle="modal" data-bs-target="#addSkillModal">
-                    <ion-icon name="add-circle-outline" class="me-2"></ion-icon>INIT_NEW_NODE
+                    <ion-icon name="add-circle-outline" class="me-2"></ion-icon>ESTABLISH_SYNAPSE
                 </button>
             </div>
         </header>
@@ -387,7 +387,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header border-bottom border-secondary">
-                    <h5 class="modal-title cyber-font text-white">>> INIT_NEW_NODE</h5>
+                    <h5 class="modal-title cyber-font text-white">>> ESTABLISH_SYNAPSE</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <form id="addSkillForm">
@@ -628,10 +628,25 @@
                         </div>
 
                         <div class="mt-3 pt-3 border-top border-secondary" style="border-color: rgba(255,255,255,0.1) !important">
-                             <div class="text-dim small cyber-font mb-1">> INTELLIGENCE_SUGGESTION</div>
-                             <div class="text-white small" style="font-style: italic; opacity: 0.8">
-                                "${skill.explainability.corrective_action}"
-                             </div>
+                             <div class="text-dim small cyber-font mb-2">> INTELLIGENCE_SUGGESTION</div>
+                             ${skill.interventions && skill.interventions.length > 0 ?
+                        skill.interventions.map(i => `
+                                    <div class="d-flex align-items-center justify-content-between mb-2 p-2" style="background: rgba(255,255,255,0.03); border-left: 2px solid var(--neon-cyan)">
+                                        <div>
+                                            <div class="text-info small cyber-font" style="font-size: 0.65rem">${i.tier.toUpperCase()} // ${i.time}</div>
+                                            <div class="text-white small" style="font-size: 0.8rem">${i.task}</div>
+                                        </div>
+                                        <div class="text-end">
+                                            <span class="cyber-badge cyan" style="font-size: 0.6rem">+${i.xp} XP</span>
+                                        </div>
+                                    </div>
+                                `).join('')
+                        : `
+                                <div class="text-white small" style="font-style: italic; opacity: 0.8">
+                                    "${skill.explainability.corrective_action}"
+                                </div>
+                                `
+                    }
                         </div>
                     </div>
                 </div>

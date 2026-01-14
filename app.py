@@ -88,6 +88,13 @@ def get_skills():
         # Get Engine Computation
         metrics = compute_skill_metrics(engine_input)
         
+        # Calculate Intervention Suggestions (Hybrid Approach)
+        from decay import calculate_decay
+        from intervention import suggest_intervention
+        
+        decay_score = calculate_decay(skill)
+        suggestions = suggest_intervention(skill, decay_score)
+
         # Merge with System ID and Gamification Data
         metrics.update({
             "id": skill.id,
@@ -98,7 +105,8 @@ def get_skills():
             "streak": skill.streak,
             # Backward compatibility for frontend
             "decay_score": metrics['proficiency_score'], 
-            "forecast_7d": metrics['proficiency_score'] # Temp placeholder, engine handles forecast in sub-object
+            "forecast_7d": metrics['proficiency_score'], # Temp placeholder
+            "interventions": suggestions # New field for specific tasks
         })
         
         output.append(metrics)

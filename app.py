@@ -1,6 +1,5 @@
 from flask import Flask, request, jsonify, render_template
 from models import db, Skill, PracticeLog
-from decay import calculate_decay, forecast_decay
 from intervention import suggest_intervention
 from datetime import datetime
 import os
@@ -88,12 +87,10 @@ def get_skills():
         # Get Engine Computation
         metrics = compute_skill_metrics(engine_input)
         
-        # Calculate Intervention Suggestions (Hybrid Approach)
-        from decay import calculate_decay
+        # Calculate Intervention Suggestions (Unified Engine Approach)
         from intervention import suggest_intervention
         
-        decay_score = calculate_decay(skill)
-        suggestions = suggest_intervention(skill, decay_score)
+        suggestions = suggest_intervention(skill.skill_name, metrics['stability_zone'], metrics['proficiency_score'])
 
         # Merge with System ID and Gamification Data
         metrics.update({
@@ -104,7 +101,7 @@ def get_skills():
             "level": skill.level,
             "streak": skill.streak,
             # Backward compatibility for frontend
-            "decay_score": metrics['proficiency_score'], 
+            "decay_score": 100 - metrics['proficiency_score'], # Approx inverse for frontend compatibility if needed
             "forecast_7d": metrics['proficiency_score'], # Temp placeholder
             "interventions": suggestions # New field for specific tasks
         })
@@ -122,13 +119,23 @@ def get_interventions():
     suggestions = []
     
     for skill in skills:
-        decay_score = calculate_decay(skill)
-        suggestion = suggest_intervention(skill, decay_score)
-        if suggestion:
+        # Re-compute minimal metrics for intervention check
+        # (Ideal world: we extract this calculation to a helper, but duplicating for safety in this refactor)
+        days_since_practice = (datetime.utcnow() - skill.last_used).days
+        engine_input = {
+            "skill_name": skill.skill_name,
+            "current_proficiency": skill.actual_score,
+            "last_practice_days_ago": days_since_practice
+        }
+        metrics = compute_skill_metrics(engine_input)
+        
+        items = suggest_intervention(skill.skill_name, metrics['stability_zone'], metrics['proficiency_score'])
+        
+        for item in items:
             suggestions.append({
                 "skill_name": skill.skill_name,
-                "decay_score": decay_score,
-                "suggestion": suggestion
+                "decay_score": 100 - metrics['proficiency_score'],
+                "suggestion": item
             })
             
     return jsonify(suggestions)

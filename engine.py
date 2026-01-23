@@ -28,44 +28,52 @@ def compute_skill_metrics(data):
     context_quality = data.get("context_quality", "low").lower()
     error_rate = data.get("error_rate", 0.0)
     
-    # 2. Determine Half-Life (H)
-    # Baseline H = 30 days
-    # High context quality -> slower decay (higher H)
-    # Frequent practice -> slower decay
+    # 2. explicit Decay Logic
+    decay_model = data.get("decay_model", "exponential")
+    decay_rate = data.get("decay_rate", 0.1)
     
-    H_base = 30.0
-    
-    context_modifier = {
-        "high": 1.5,    # H becomes 45 days
-        "medium": 1.0,  # H becomes 30 days
-        "low": 0.5      # H becomes 15 days
-    }.get(context_quality, 1.0)
-    
-    # Practice Frequency Modifier
-    # > 5 events/month = active maintenance -> slower decay
-    # < 2 events/month = rapid decay
-    freq_modifier = 1.0
-    if practice_30d > 5:
-        freq_modifier = 1.2
-    elif practice_30d < 2:
-        freq_modifier = 0.8
+    # Validation
+    if decay_model not in ["linear", "exponential"]:
+        decay_model = "exponential"
         
-    H = H_base * context_modifier * freq_modifier
+    def calculate_linear_decay(initial, days, rate):
+        """
+        Linear: Level = max(0, Initial - (Rate * Days))
+        """
+        # Assume rate is points per day. 
+        # If rate is 0.1 means 0.1 points per day? No, usually rate is faster.
+        # Let's adhere to the user request: current_level = max(0, initial_level - (decay_rate * days_inactive))
+        # Rate probably needs to be higher for linear to make sense, e.g. 1-2 points/day. 
+        # But we use the stored parameter.
+        val = initial - (rate * days)
+        return max(0.0, min(100.0, val))
+
+    def calculate_exponential_decay(initial, days, rate):
+        """
+        Exponential: Level = Initial * e^(-Rate * Days)
+        """
+        if initial <= 0: return 0.0
+        val = initial * math.exp(-rate * days)
+        return max(0.0, min(100.0, val))
+
+    # Calculate Proficiency
+    if decay_model == "linear":
+        proficiency_score = calculate_linear_decay(P0, t, decay_rate)
+    else:
+        proficiency_score = calculate_exponential_decay(P0, t, decay_rate)
     
-    # 3. Compute Decay and Current Proficiency P(t)
-    # Formula: P(t) = P0 * 2^(-t/H)
-    # P(t) is new proficiency score
-    
-    if H <= 0: H = 1.0 # Safety
-    
-    proficiency_score = P0 * (2 ** (-t / H))
-    
-    # Apply penalty for high error rate (Direct impact on proficiency)
-    # If error rate > 5%, subtract penalty
+    # Apply penalty for high error rate (Direct impact reduces score further)
     if error_rate > 0.05:
         proficiency_score -= (error_rate * 100) * 0.5
         
     proficiency_score = max(0.0, min(100.0, proficiency_score))
+    
+    # H (Half-Life) for consistency in other metrics
+    # In exponential, Half-Life = ln(2) / decay_rate
+    if decay_rate > 0:
+        H = math.log(2) / decay_rate
+    else:
+        H = 999.0 # Practically infinite
     
     # Decay Rate (points per day approx at current t) derived from slope or just 1/H relation?
     # Simple metric: Rate = (P0 - Pt) / t if t > 0, else theoretical loss in 1 day

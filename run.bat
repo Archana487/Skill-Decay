@@ -8,12 +8,14 @@ if exist requirements.txt (
     pip install -r requirements.txt
 )
 
-:: Open the browser after a short delay
-echo Opening dashboard...
-start "" "http://127.0.0.1:5000"
-
-:: Start the Flask app
+:: Start the Flask app in a new window/process
 echo Launching application...
-python app.py
+start /b python app.py
+
+:: Open the browser after a short delay
+echo Waiting for server to initialize...
+timeout /t 3 /nobreak > nul
+echo Opening dashboard...
+start "" "http://localhost:5000"
 
 pause

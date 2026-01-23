@@ -40,6 +40,8 @@ def add_skill():
         skill_name=data['skill_name'],
         confidence_score=data.get('confidence_score', 50),
         actual_score=data.get('actual_score', 50),
+        decay_model=data.get('decay_model', 'exponential'),
+        decay_rate=data.get('decay_rate', 0.1),
         last_used=datetime.utcnow()
     )
     
@@ -81,7 +83,9 @@ def get_skills():
             "real_world_usage_last_30_days": practice_count_30d, # Approx
             "avg_task_time_seconds": getattr(skill, 'avg_task_time_seconds', 300),
             "error_rate": getattr(skill, 'error_rate', 0.0),
-            "context_quality": getattr(skill, 'context_quality', 'low')
+            "context_quality": getattr(skill, 'context_quality', 'low'),
+            "decay_model": getattr(skill, 'decay_model', 'exponential'),
+            "decay_rate": getattr(skill, 'decay_rate', 0.1)
         }
         
         # Get Engine Computation
@@ -212,6 +216,16 @@ def log_practice():
         "new_streak": skill.streak
     }), 201
 
+@app.route('/delete-skill/<int:skill_id>', methods=['DELETE'])
+def delete_skill(skill_id):
+    """
+    Endpoint to remove a skill and its history.
+    """
+    skill = Skill.query.get_or_404(skill_id)
+    db.session.delete(skill)
+    db.session.commit()
+    return jsonify({"message": "Neural node de-established successfully"}), 200
+
 @app.route('/history', methods=['GET'])
 def get_history():
     """
@@ -230,5 +244,5 @@ def get_history():
     return jsonify(output)
 
 if __name__ == '__main__':
-    # Running in debug mode as requested
-    app.run(debug=True)
+    # Running in debug mode with explicit host and port
+    app.run(host='127.0.0.1', port=5000, debug=True)

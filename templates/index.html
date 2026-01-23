@@ -603,6 +603,9 @@
                                 <button class="btn-icon-cyber" onclick="simulateDecay(${skill.id})" title="ACCELERATE_DECAY">
                                     <ion-icon name="hourglass"></ion-icon>
                                 </button>
+                                <button class="btn-icon-cyber" onclick="deleteNode(${skill.id}, '${skill.skill_name}')" title="DE-ESTABLISH_SYNAPSE" style="border-color: var(--neon-alert); color: var(--neon-alert);">
+                                    <ion-icon name="trash-outline"></ion-icon>
+                                </button>
                             </div>
                         </div>
 
@@ -742,6 +745,22 @@
             await fetch(`/simulate-decay/${id}`, { method: 'POST' });
             showToast('TEMPORAL_SHIFT_COMPLETE', 'info');
             fetchAll();
+        };
+
+        window.deleteNode = async (id, name) => {
+            if (confirm(`ARE_YOU_SURE_YOU_WANT_TO_DE-ESTABLISH_SYNAPSE: ${name}?`)) {
+                try {
+                    const response = await fetch(`/delete-skill/${id}`, { method: 'DELETE' });
+                    if (response.ok) {
+                        showToast('NODE_DE-ESTABLISHED', 'success');
+                        fetchAll();
+                    } else {
+                        showToast('ERROR: DE-ESTABLISH_FAILED', 'error');
+                    }
+                } catch (e) {
+                    showToast('NETWORK_FAILURE: CANNOT_DELETE', 'error');
+                }
+            }
         };
     </script>
 </body>

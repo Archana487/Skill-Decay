@@ -20,6 +20,10 @@ class Skill(db.Model):
     error_rate = db.Column(db.Float, default=0.0) # 0.0 to 1.0
     context_quality = db.Column(db.String(20), default="low") # low, medium, high
     
+    # Decay Configuration
+    decay_model = db.Column(db.String(20), default="exponential") # 'linear' or 'exponential'
+    decay_rate = db.Column(db.Float, default=0.1) # Rate parameter for the model
+    
     # Gamification and Tracking
     xp = db.Column(db.Integer, default=0)
     level = db.Column(db.Integer, default=1)
